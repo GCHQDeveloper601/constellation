@@ -1,5 +1,3 @@
-/* Quality Control View */
-
 #qualitycontrolview-border-pane {
     -fx-background-color: rgba(68, 68, 68, 1.0);
 }
@@ -15,7 +13,7 @@
  ******************************************************************************/
 
 .table-view {
-    -fx-skin: "javafx.scene.control.skin.TableViewSkin";
+    -fx-skin: "com.sun.javafx.scene.control.skin.TableViewSkin";
     -fx-background-color: -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: 0,1;
 
@@ -24,7 +22,7 @@
     -fx-padding: 1; /* 0.083333em; */
 
     /* Constants used throughout the tableview.
-     * TODO: should these be derived from the palette in .scene?
+     * TODO: Should these be derived from the palette in .scene?
      */
     -fx-table-header-border-color: #959595;
     /*    -fx-table-header-background-color: linear (0%,0%) to (0%,100%) stops (80%, #bbbbbb) (10%, #f6f6f6);*/
@@ -64,7 +62,7 @@
 /* Each row in the table is a table-row-cell. Inside a table-row-cell is any
    number of table-cell. */
 .table-row-cell {
-    -fx-skin: "javafx.scene.control.skin.TableRowSkin";
+    -fx-skin: "com.sun.javafx.scene.control.skin.TableRowSkin";
     -fx-background-color: -fx-table-cell-border-color, -fx-control-inner-background;
     -fx-background-insets: 0, 1 0 1 0;
     -fx-padding: 0.0em; /* 0 */
@@ -88,9 +86,9 @@
 
 /* When the table-row-cell is selected and focused */
 .table-view:focused .table-row-cell:filled:focused:selected {
-    -fx-background: -fx-accent;
     -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
     -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
     -fx-text-fill: -fx-selection-bar-text;
 }
 
@@ -134,7 +132,7 @@
 }
 
 .table-cell {
-    -fx-skin: "javafx.scene.control.skin.TableCellSkin";
+    -fx-skin: "com.sun.javafx.scene.control.skin.TableCellSkin";
     -fx-padding: 0.166667em; /* 2px, plus border adds 1px */
 
     -fx-background-color: transparent;
@@ -170,9 +168,9 @@
 }
 
 .table-view:focused .table-row-cell:filled .table-cell:focused:selected {
-    -fx-background: -fx-accent;
     -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
     -fx-background-insets: 0 1 0 0, 1 2 1 1, 2 3 2 2;
+    -fx-background: -fx-accent;
     -fx-text-fill: -fx-selection-bar-text;
 }
 
@@ -353,7 +351,7 @@
  ******************************************************************************/
 
 .button {
-    -fx-skin: "javafx.scene.control.skin.ButtonSkin";
+    -fx-skin: "com.sun.javafx.scene.control.skin.ButtonSkin";
     /*-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;*/
     -fx-background-color: -fx-shadow-highlight-color, rgba(255,255,255,0.3), -fx-inner-border, rgba(255,255,255,0.3);
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;

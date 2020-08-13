@@ -50,7 +50,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.logging.Level.FINER;
 import static java.util.logging.Level.FINEST;
 import java.util.logging.Logger;
@@ -190,7 +189,12 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
             c = SwingUtilities.getAncestorOfClass(TopComponent.class,
                     openPanes[0]);
             if (c != null) {
-                WindowManager.getDefault().invokeWhenUIReady(((TopComponent) c)::requestActive);
+                WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TopComponent) c).requestActive();
+                    }
+                });
             } else {
                 assert false;
             }
@@ -211,17 +215,20 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
             return false;
         }
 
-        WindowManager.getDefault().invokeWhenUIReady(() -> {
-            /*
-            * Note: editorCookie.open() may return before the editor is
-            * actually open. But since the document was successfully open,
-            * the editor should be opened quite quickly and no problem
-            * should occur.
-             */
-            editorCookie.open();
+        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+            @Override
+            public void run() {
+                /*
+                 * Note: editorCookie.open() may return before the editor is
+                 * actually open. But since the document was successfully open,
+                 * the editor should be opened quite quickly and no problem
+                 * should occur.
+                 */
+                editorCookie.open();
 
-            if (line >= 0) {
-                openDocAtLine(editorCookie, doc, line);
+                if (line >= 0) {
+                    openDocAtLine(editorCookie, doc, line);
+                }
             }
         });
         return true;
@@ -328,12 +335,9 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
         public void propertyChange(final PropertyChangeEvent e) {
             LOGGER.finer("SetCursorTask: propertyChange()");               //NOI18N
 
-            if (!PROP_OPENED_PANES.equals(e.getPropertyName())) {
-                throw new IllegalArgumentException();
-            } else {
-                observable.removePropertyChangeListener(this);
-                Mutex.EVENT.writeAccess(this);
-            }
+            assert PROP_OPENED_PANES.equals(e.getPropertyName());
+            observable.removePropertyChangeListener(this);
+            Mutex.EVENT.writeAccess(this);
         }
 
         private void trySeveralTimes() {
@@ -344,7 +348,7 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
 
         class ScheduledOpenTask implements Runnable {
 
-            private final AtomicInteger remainingTries = new AtomicInteger(MAX_TRIES);
+            private volatile int remainingTries = MAX_TRIES;
 
             @Override
             public void run() {
@@ -352,12 +356,11 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
                     EventQueue.invokeAndWait(SetCursorTask.this);
                 } catch (InterruptedException ex) {
                     Exceptions.printStackTrace(ex);
-                    Thread.currentThread().interrupt();
                 } catch (InvocationTargetException ex) {
                     Exceptions.printStackTrace(ex);
                 }
                 if (!SetCursorTask.this.success) {
-                    if (remainingTries.decrementAndGet() != 0) {
+                    if (--remainingTries != 0) {
                         RequestProcessor.getDefault()
                                 .post(this, OPEN_EDITOR_WAIT_PERIOD_MS);
                     } else {
@@ -481,15 +484,15 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
      */
     private boolean openDataObjectByCookie(final DataObject dataObject,
             final int line) {
-        if (dataObject.getCookie(OpenCookie.class) != null) {
-            return openByCookie(dataObject.getCookie(OpenCookie.class), OpenCookie.class, line);
-        } else if (dataObject.getCookie(EditCookie.class) != null) {
-            return openByCookie(dataObject.getCookie(EditCookie.class), EditCookie.class, line);
-        } else if (dataObject.getCookie(ViewCookie.class) != null) {
-            return openByCookie(dataObject.getCookie(ViewCookie.class), ViewCookie.class, line);
-        } else {
-            return false;
+
+        Class<? extends Node.Cookie> cookieClass;
+        Node.Cookie cookie;
+        if ((cookie = dataObject.getCookie(cookieClass = OpenCookie.class)) != null
+                || (cookie = dataObject.getCookie(cookieClass = EditCookie.class)) != null
+                || (cookie = dataObject.getCookie(cookieClass = ViewCookie.class)) != null) {
+            return openByCookie(cookie, cookieClass, line);
         }
+        return false;
     }
 
     /**
@@ -544,12 +547,13 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
                         fileName));
 
         /* Look for an EditorCookie indicating a text file */
-        if ((line != -1) && dataObject.getCookie(EditorCookie.Observable.class) != null) {
-            return openByCookie(dataObject.getCookie(EditorCookie.Observable.class), EditorCookie.Observable.class, line);
-        }
-
-        if (dataObject.getCookie(EditorCookie.class) != null) {
-            return openByCookie(dataObject.getCookie(EditorCookie.class), EditorCookie.class, line);
+        Class<? extends Node.Cookie> cookieClass;
+        Node.Cookie cookie;
+        if ((line != -1)
+                && (((cookie = dataObject.getCookie(cookieClass = EditorCookie.Observable.class)) != null)
+                || ((cookie = dataObject.getCookie(cookieClass = EditorCookie.class)) != null))) {
+            boolean ret = openByCookie(cookie, cookieClass, line);
+            return ret;
         }
 
         /* Attempt to open the DataObject using its default action */
@@ -580,7 +584,12 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
             LOGGER.finest("   - will call action.actionPerformed(...)");   //NOI18N
             final Action a = action;
             final Node n = dataNode;
-            WindowManager.getDefault().invokeWhenUIReady(() -> a.actionPerformed(new ActionEvent(n, 0, "")));
+            WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                @Override
+                public void run() {
+                    a.actionPerformed(new ActionEvent(n, 0, ""));
+                }
+            });
 
             return true;
         }
@@ -595,7 +604,12 @@ public class DefaultOpenFileImpl implements OpenFileImpl, Runnable {
         if (fileObject.isFolder() || FileUtil.isArchiveFile(fileObject)) {
             final Node node = dataObject.getNodeDelegate();
             if (node != null) {
-                WindowManager.getDefault().invokeWhenUIReady(() -> NodeOperation.getDefault().explore(node));
+                WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                    @Override
+                    public void run() {
+                        NodeOperation.getDefault().explore(node);
+                    }
+                });
                 return true;
             }
         }

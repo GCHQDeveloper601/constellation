@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package au.gov.asd.tac.constellation.functionality.dialog;
 
-import au.gov.asd.tac.constellation.graph.interaction.plugins.clipboard.ClipboardUtilities;
-import au.gov.asd.tac.constellation.utilities.color.ConstellationColor;
-import au.gov.asd.tac.constellation.utilities.icon.UserInterfaceIconProvider;
+import au.gov.asd.tac.constellation.functionality.copypaste.ClipboardUtilities;
+import au.gov.asd.tac.constellation.visual.color.ConstellationColor;
+import au.gov.asd.tac.constellation.visual.icons.UserInterfaceIconProvider;
 import java.awt.Dimension;
 import java.util.List;
 import javafx.collections.ListChangeListener;
@@ -98,12 +98,15 @@ public class ItemsDialog<T> extends ConstellationDialog {
         table.setItems(rows);
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().clearSelection();
-        table.getSelectionModel().getSelectedIndices().addListener((ListChangeListener.Change<? extends Integer> c) -> {
-            try {
-                List<ItemsRow<T>> selectedRows = table.getSelectionModel().getSelectedItems();
-                selectRows(selectedRows);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+        table.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener() {
+            @Override
+            public void onChanged(ListChangeListener.Change c) {
+                try {
+                    List<ItemsRow<T>> selectedRows = table.getSelectionModel().getSelectedItems();
+                    selectRows(selectedRows);
+                } catch (InterruptedException ex) {
+
+                }
             }
         });
 
@@ -121,21 +124,27 @@ public class ItemsDialog<T> extends ConstellationDialog {
         root.setBottom(buttonPane);
 
         final Button copyToClipboardButton = new Button("Copy Selection to Clipboard");
-        copyToClipboardButton.setOnAction((ActionEvent event) -> {
-            final StringBuilder sb = new StringBuilder();
-            
-            final ObservableList<ItemsRow<T>> selectedRows = table.getSelectionModel().getSelectedItems();
-            for (ItemsRow<?> r : selectedRows) {
-                sb.append(String.format("%s,%s\n", r.labelProperty().getValue(), r.descriptionProperty().getValue()));
+        copyToClipboardButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                final StringBuilder sb = new StringBuilder();
+
+                final ObservableList<ItemsRow<T>> selectedRows = table.getSelectionModel().getSelectedItems();
+                for (ItemsRow<?> r : selectedRows) {
+                    sb.append(String.format("%s,%s\n", r.labelProperty().getValue(), r.descriptionProperty().getValue()));
+                }
+
+                ClipboardUtilities.copyToClipboard(sb.toString());
             }
-            
-            ClipboardUtilities.copyToClipboard(sb.toString());
         });
         buttonPane.getChildren().add(copyToClipboardButton);
 
         final Button selectAllButton = new Button("Select All");
-        selectAllButton.setOnAction((ActionEvent event) -> {
-            table.getSelectionModel().selectAll();
+        selectAllButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                table.getSelectionModel().selectAll();
+            }
         });
         buttonPane.getChildren().add(selectAllButton);
 
@@ -143,8 +152,11 @@ public class ItemsDialog<T> extends ConstellationDialog {
         buttonPane.getChildren().add(okButton);
 
         cancelButton = new Button("Cancel");
-        cancelButton.setOnAction((ActionEvent event) -> {
-            hideDialog();
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                hideDialog();
+            }
         });
         buttonPane.getChildren().add(cancelButton);
 
@@ -154,7 +166,6 @@ public class ItemsDialog<T> extends ConstellationDialog {
     }
 
     protected void selectRows(List<ItemsRow<T>> rows) throws InterruptedException {
-        // Method overriden LeadNodeSelectionDialog
     }
 
     public void setOkButtonAction(EventHandler<ActionEvent> event) {

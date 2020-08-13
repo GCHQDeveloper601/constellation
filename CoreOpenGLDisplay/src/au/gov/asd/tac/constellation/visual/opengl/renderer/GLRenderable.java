@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package au.gov.asd.tac.constellation.visual.opengl.renderer;
 
-import au.gov.asd.tac.constellation.utilities.graphics.Matrix44f;
+import au.gov.asd.tac.constellation.visual.graphics3d.Matrix44f;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 
@@ -45,21 +45,9 @@ public interface GLRenderable extends Comparable<GLRenderable> {
         public void run(final GL3 gl);
     }
 
-    public enum RenderablePriority {
-        ANNOTATIONS_PRIORITY(20),
-        DEFAULT_PRIORITY(10),
-        HIGH_PRIORITY(0);
-
-        private final int value;
-
-        private RenderablePriority(final int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-    }
+    public static int ANNOTATIONS_PRIORITY = 20;
+    public static int DEFAULT_PRIORITY = 10;
+    public static int HIGH_PRIORITY = 0;
 
     @Override
     public default int compareTo(final GLRenderable o) {
@@ -77,7 +65,7 @@ public interface GLRenderable extends Comparable<GLRenderable> {
      * @return
      */
     public default int getPriority() {
-        return RenderablePriority.DEFAULT_PRIORITY.getValue();
+        return DEFAULT_PRIORITY;
     }
 
     /**

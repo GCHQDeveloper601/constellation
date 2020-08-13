@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ public class TableViewState {
     }
 
     public TableViewState(final TableViewState state) {
-        this.selectedOnly = state != null && state.selectedOnly;
+        this.selectedOnly = state == null
+                ? false : state.selectedOnly;
         this.elementType = state == null
                 ? GraphElementType.TRANSACTION : state.elementType;
         this.transactionColumnAttributes = state == null

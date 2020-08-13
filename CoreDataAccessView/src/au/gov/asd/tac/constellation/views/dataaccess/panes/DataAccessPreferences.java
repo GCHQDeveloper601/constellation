@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ class DataAccessPreferences {
     private static final Preferences PREFERENCES = NbPreferences.forModule(DataAccessPreferences.class);
     private static final String EXPAND = "Expand";
     private static final String FAVOURITE = "Favourite";
-    private static final String STRING_STRING_FORMAT = "%s.%s";
 
     /**
      * Set an expanded preference.
@@ -39,7 +38,7 @@ class DataAccessPreferences {
      * @param isExpanded Boolean value.
      */
     static void setExpanded(final String title, final boolean isExpanded) {
-        PREFERENCES.putBoolean(String.format(STRING_STRING_FORMAT, EXPAND, title), isExpanded);
+        PREFERENCES.putBoolean(String.format("%s.%s", EXPAND, title), isExpanded);
     }
 
     /**
@@ -52,14 +51,14 @@ class DataAccessPreferences {
      * @return The value of the preference.
      */
     static boolean isExpanded(final String title, final boolean defaultExpanded) {
-        return PREFERENCES.getBoolean(String.format(STRING_STRING_FORMAT, EXPAND, title), defaultExpanded);
+        return PREFERENCES.getBoolean(String.format("%s.%s", EXPAND, title), defaultExpanded);
     }
 
     static void setFavourite(final String title, final boolean isExpanded) {
-        PREFERENCES.putBoolean(String.format(STRING_STRING_FORMAT, FAVOURITE, title), isExpanded);
+        PREFERENCES.putBoolean(String.format("%s.%s", FAVOURITE, title), isExpanded);
     }
 
     static boolean isfavourite(final String title, final boolean defaultExpanded) {
-        return PREFERENCES.getBoolean(String.format(STRING_STRING_FORMAT, FAVOURITE, title), defaultExpanded);
+        return PREFERENCES.getBoolean(String.format("%s.%s", FAVOURITE, title), defaultExpanded);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package au.gov.asd.tac.constellation.views.analyticview.aggregators;
 import au.gov.asd.tac.constellation.views.analyticview.results.AnalyticResult;
 import au.gov.asd.tac.constellation.views.analyticview.results.ClusterResult;
 import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -32,7 +31,7 @@ public class FirstClusterAggregator implements AnalyticAggregator<ClusterResult>
 
     @Override
     public ClusterResult aggregate(final List<ClusterResult> results) {
-        if (CollectionUtils.isEmpty(results) || results.get(0) == null) {
+        if (results == null || results.isEmpty() || results.get(0) == null) {
             return new ClusterResult();
         } else {
             return results.get(0);
@@ -45,7 +44,7 @@ public class FirstClusterAggregator implements AnalyticAggregator<ClusterResult>
     }
 
     @Override
-    public Class<? extends AnalyticResult<?>> getResultType() {
+    public Class<? extends AnalyticResult> getResultType() {
         return ClusterResult.class;
     }
 }

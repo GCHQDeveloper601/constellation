@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package au.gov.asd.tac.constellation.testing.jdbc;
 
 import java.awt.Component;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.lang3.StringUtils;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
@@ -69,12 +67,10 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
 
     @Override
     public void addChangeListener(ChangeListener l) {
-        // Required for ExtendedAsynchronousValidatingPanel, intentionally left blank
     }
 
     @Override
     public void removeChangeListener(ChangeListener l) {
-        // Required for ExtendedAsynchronousValidatingPanel, intentionally left blank
     }
 
     @Override
@@ -92,7 +88,6 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
 
     @Override
     public void prepareValidation() {
-        // Required for ExtendedAsynchronousValidatingPanel, intentionally left blank
     }
 
     @Override
@@ -105,7 +100,7 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
             final File jarFile = new File(data.jar);
             try (final Connection conn = JdbcUtilities.getConnection(jarFile, data.driverName, data.url, data.username, data.password)) {
                 final String vxTable = panel.getVxTable() != null ? panel.getVxTable().trim() : null;
-                if (StringUtils.isNotBlank(vxTable)) {
+                if (vxTable != null && !vxTable.isEmpty()) {
                     getColumns(conn, vxTable, vxColumns);
                 }
                 if (vxTable != null && !vxTable.equals(data.vxTable)) {
@@ -115,7 +110,7 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
                 data.vxColumns = vxColumns;
 
                 final String txTable = panel.getTxTable() != null ? panel.getTxTable().trim() : null;
-                if (StringUtils.isNotBlank(txTable)) {
+                if (txTable != null && !txTable.isEmpty()) {
                     getColumns(conn, txTable, txColumns);
                 }
                 if (txTable != null && !txTable.equals(data.txTable)) {
@@ -124,11 +119,7 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
 
                 data.txColumns = txColumns;
             }
-        } catch (final MalformedURLException | ClassNotFoundException
-                | IllegalAccessException | IllegalArgumentException
-                | InstantiationException | NoSuchMethodException
-                | SecurityException | InvocationTargetException
-                | SQLException ex) {
+        } catch (final MalformedURLException | ClassNotFoundException | SQLException | InstantiationException | IllegalAccessException ex) {
             LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
             final String msg = String.format("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
             throw new WizardValidationException(panel, msg, msg);
@@ -147,6 +138,5 @@ public class TablesPanelController implements WizardDescriptor.ExtendedAsynchron
 
     @Override
     public void finishValidation() {
-        // Required for ExtendedAsynchronousValidatingPanel, intentionally left blank
     }
 }

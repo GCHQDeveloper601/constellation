@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,6 @@ public final class DeveloperOptionsPanelController extends OptionsPanelControlle
 
     @Override
     public void cancel() {
-        // Required for OptionsPanelController, intentionally left blank
     }
 
     @Override
@@ -90,11 +89,14 @@ public final class DeveloperOptionsPanelController extends OptionsPanelControlle
     public boolean isChanged() {
         final Preferences prefs = NbPreferences.forModule(DeveloperPreferenceKeys.class);
         final DeveloperOptionsPanel developerOptionsPanel = getPanel();
-        return !(developerOptionsPanel.getGcOnOpen() == prefs.getBoolean(DeveloperPreferenceKeys.FORCE_GC_ON_OPEN, DeveloperPreferenceKeys.FORCE_GC_ON_OPEN_DEFAULT)
+        final boolean changed
+                = !(developerOptionsPanel.getGcOnOpen() == prefs.getBoolean(DeveloperPreferenceKeys.FORCE_GC_ON_OPEN, DeveloperPreferenceKeys.FORCE_GC_ON_OPEN_DEFAULT)
                 && developerOptionsPanel.getGcOnClose() == prefs.getBoolean(DeveloperPreferenceKeys.FORCE_GC_ON_CLOSE, DeveloperPreferenceKeys.FORCE_GC_ON_CLOSE_DEFAULT)
                 && developerOptionsPanel.getDebugGl() == prefs.getBoolean(DeveloperPreferenceKeys.DEBUG_GL, DeveloperPreferenceKeys.DEBUG_GL_DEFAULT)
                 && developerOptionsPanel.getPrintGl() == prefs.getBoolean(DeveloperPreferenceKeys.PRINT_GL_CAPABILITIES, DeveloperPreferenceKeys.PRINT_GL_CAPABILITIES_DEFAULT)
                 && developerOptionsPanel.getDisplayFps() == prefs.getBoolean(DeveloperPreferenceKeys.DISPLAY_FRAME_RATE, DeveloperPreferenceKeys.DISPLAY_FRAME_RATE_DEFAULT));
+
+        return changed;
     }
 
     @Override

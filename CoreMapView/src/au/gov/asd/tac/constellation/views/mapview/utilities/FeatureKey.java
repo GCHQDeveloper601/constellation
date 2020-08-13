@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ public class FeatureKey {
             default:
                 this.featureClass = null;
                 this.featureLocations = null;
-                break;
         }
     }
 
@@ -92,7 +91,10 @@ public class FeatureKey {
         if (!Objects.equals(featureClass, other.featureClass)) {
             return false;
         }
-        return Objects.equals(featureLocations, other.featureLocations);
+        if (!Objects.equals(featureLocations, other.featureLocations)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

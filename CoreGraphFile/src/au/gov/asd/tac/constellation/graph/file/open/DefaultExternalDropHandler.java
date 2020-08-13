@@ -89,7 +89,7 @@ public class DefaultExternalDropHandler extends ExternalDropHandler {
     }
 
     boolean canDrop(final DataFlavor[] flavors) {
-        for (int i = 0; flavors != null && i < flavors.length; i++) {
+        for (int i = 0; null != flavors && i < flavors.length; i++) {
             if (DataFlavor.javaFileListFlavor.equals(flavors[i])
                     || getUriListDataFlavor().equals(flavors[i])) {
 
@@ -102,7 +102,7 @@ public class DefaultExternalDropHandler extends ExternalDropHandler {
     @Override
     public boolean handleDrop(final DropTargetDropEvent e) {
         Transferable t = e.getTransferable();
-        if (t == null) {
+        if (null == t) {
             return false;
         }
         List<File> fileList = getFileList(t);
@@ -172,9 +172,7 @@ public class DefaultExternalDropHandler extends ExternalDropHandler {
         try {
             if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 //windows & mac
-                @SuppressWarnings("unchecked") //transferData will be a list of files which extends from Object type
-                List<File> transferData = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-                return transferData;
+                return (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
             } else if (t.isDataFlavorSupported(getUriListDataFlavor())) {
                 //linux
                 String uriList = (String) t.getTransferData(getUriListDataFlavor());
@@ -206,7 +204,7 @@ public class DefaultExternalDropHandler extends ExternalDropHandler {
     private static DataFlavor uriListDataFlavor;
 
     DataFlavor getUriListDataFlavor() {
-        if (uriListDataFlavor == null) {
+        if (null == uriListDataFlavor) {
             try {
                 uriListDataFlavor = new DataFlavor("text/uri-list;class=java.lang.String");
             } catch (ClassNotFoundException cnfE) {
@@ -230,11 +228,11 @@ public class DefaultExternalDropHandler extends ExternalDropHandler {
                 URI uri = new URI(s);
                 File file = new File(uri);
                 list.add(file);
-            } catch (java.net.URISyntaxException | IllegalArgumentException e) {
+            } catch (java.net.URISyntaxException e) {
                 // malformed URI
+            } catch (IllegalArgumentException e) {
+                // the URI is not a valid 'file:' URI
             }
-            // the URI is not a valid 'file:' URI
-
         }
         return list;
     }

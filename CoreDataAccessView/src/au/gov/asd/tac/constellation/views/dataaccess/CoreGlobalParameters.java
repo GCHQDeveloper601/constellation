@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package au.gov.asd.tac.constellation.views.dataaccess;
 
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.DateTimeRangeParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.DateTimeRangeParameterType.DateTimeRangeParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameter;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameters;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.DateTimeRangeParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.DateTimeRangeParameterType.DateTimeRangeParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterValue;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -45,14 +45,12 @@ public class CoreGlobalParameters extends GlobalParameters {
      */
     private static final int QUERY_NAME_PARAMETER_ID_INDEX = 0;
     public static final String QUERY_NAME_PARAMETER_ID = PluginParameter.buildId(CoreGlobalParameters.class, "query_name");
-    public static final PluginParameter QUERY_NAME_PARAMETER = StringParameterType.build(QUERY_NAME_PARAMETER_ID);
 
     /**
      * The datetime range that the query spans.
      */
     private static final int DATETIME_RANGE_PARAMETER_ID_INDEX = 1;
     public static final String DATETIME_RANGE_PARAMETER_ID = PluginParameter.buildId(CoreGlobalParameters.class, "datetime_range");
-    public static final PluginParameter DATETIME_RANGE_PARAMETER = DateTimeRangeParameterType.build(DATETIME_RANGE_PARAMETER_ID);
 
     @Override
     public List<PositionalPluginParameter> getParameterList(final PluginParameters previous) {
@@ -66,14 +64,14 @@ public class CoreGlobalParameters extends GlobalParameters {
     }
 
     private List<PositionalPluginParameter> buildParameterList(final PluginParameters previous) {
-        final PluginParameter<StringParameterValue> queryNameParameter = QUERY_NAME_PARAMETER;
+        final PluginParameter<StringParameterValue> queryNameParameter = StringParameterType.build(QUERY_NAME_PARAMETER_ID);
         queryNameParameter.setName("Query Name");
         queryNameParameter.setDescription("A reference name for the query");
 
-        final PluginParameter<DateTimeRangeParameterValue> datetimeRangeParameter = DATETIME_RANGE_PARAMETER;
+        final PluginParameter<DateTimeRangeParameterValue> datetimeRangeParameter = DateTimeRangeParameterType.build(DATETIME_RANGE_PARAMETER_ID);
         datetimeRangeParameter.setName("Range");
         datetimeRangeParameter.setDescription("The date and time range to query");
-        datetimeRangeParameter.setHelpID(CoreGlobalParameters.class.getName());
+        datetimeRangeParameter.setHelpID(this.getClass().getCanonicalName());
 
         final List<PositionalPluginParameter> positionalPluginParametersList = new ArrayList<>();
         positionalPluginParametersList.add(QUERY_NAME_PARAMETER_ID_INDEX, new PositionalPluginParameter(queryNameParameter, 0));
@@ -83,13 +81,11 @@ public class CoreGlobalParameters extends GlobalParameters {
     }
 
     private void updateParameterList(final PluginParameters previous) {
-        @SuppressWarnings("unchecked") //QUERY_NAME_PARAMETER will always be of type StringParameter
-        final PluginParameter<StringParameterValue> queryNameParameter = (PluginParameter<StringParameterValue>) CORE_GLOBAL_PARAMETER_IDS.get(QUERY_NAME_PARAMETER_ID_INDEX).getParameter();
+        final PluginParameter<StringParameterValue> queryNameParameter = CORE_GLOBAL_PARAMETER_IDS.get(QUERY_NAME_PARAMETER_ID_INDEX).getParameter();
         queryNameParameter.setStringValue(String.format("%s at %s", System.getProperty("user.name"), TIMESTAMP_FORMAT.format(Instant.now())));
 
         if (previous != null) {
-            @SuppressWarnings("unchecked") //DATETIME_RANGE_PARAMETER will always be of type DateTimeRangeParameter
-            final PluginParameter<DateTimeRangeParameterValue> datetimeRangeParameter = (PluginParameter<DateTimeRangeParameterValue>) CORE_GLOBAL_PARAMETER_IDS.get(DATETIME_RANGE_PARAMETER_ID_INDEX).getParameter();
+            final PluginParameter<DateTimeRangeParameterValue> datetimeRangeParameter = CORE_GLOBAL_PARAMETER_IDS.get(DATETIME_RANGE_PARAMETER_ID_INDEX).getParameter();
             datetimeRangeParameter.setDateTimeRangeValue(previous.getParameters().get(DATETIME_RANGE_PARAMETER_ID).getDateTimeRangeValue());
         }
     }

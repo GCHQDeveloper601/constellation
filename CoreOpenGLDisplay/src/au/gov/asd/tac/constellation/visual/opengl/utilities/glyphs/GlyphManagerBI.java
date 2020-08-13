@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Convert text into images that can be passed to OpenGL.
@@ -224,7 +223,8 @@ public final class GlyphManagerBI implements GlyphManager {
         final Graphics2D g2d = tmpBI.createGraphics();
         maxFontHeight = Arrays.stream(this.fontsInfo).map(fil -> {
             final FontMetrics fm = g2d.getFontMetrics(fil.font);
-            return fm.getHeight();
+            final int height = fm.getHeight();
+            return height;
         }).mapToInt(i -> i).max().orElseThrow(NoSuchElementException::new);
         g2d.dispose();
 
@@ -317,8 +317,8 @@ public final class GlyphManagerBI implements GlyphManager {
      * @param text The text top be rendered.
      */
     @Override
-    public synchronized void renderTextAsLigatures(final String text, GlyphStream glyphStream) {
-        if (StringUtils.isBlank(text)) {
+    public void renderTextAsLigatures(final String text, GlyphStream glyphStream) {
+        if (text == null || text.isEmpty()) {
             return;
         }
 
@@ -560,7 +560,9 @@ public final class GlyphManagerBI implements GlyphManager {
         g2d.fillRect(0, 0, size, size);
         g2d.dispose();
 
-        return textureBuffer.addRectImage(bg, extra);
+        final int position = textureBuffer.addRectImage(bg, extra);
+
+        return position;
     }
 
     @Override

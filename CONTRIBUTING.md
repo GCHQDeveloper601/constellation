@@ -26,7 +26,7 @@ feel free to propose changes to this document in a pull request.
   * [Your First Code Contribution](#your-first-code-contribution)
   * [Pull Requests](#pull-requests)
 
-[Style Guides](STYLE_GUIDELINES.md)
+[Style Guides](Style_Guidelines.md)
   * [Git Commit Messages](#git-commit-messages)
 
 ## Code of Conduct
@@ -284,7 +284,7 @@ on how to do this, see the ***Build Constellation*** section in the
     <#if licenseFirst??>
     ${licenseFirst}
     </#if>
-    ${licensePrefix}Copyright 2010-2020 Australian Signals Directorate
+    ${licensePrefix}Copyright 2010-2019 Australian Signals Directorate
     ${licensePrefix}
     ${licensePrefix}Licensed under the Apache License, Version 2.0 (the "License");
     ${licensePrefix}you may not use this file except in compliance with the License.
@@ -351,11 +351,6 @@ logic to check whether the freeze graph view state is enabled like so:
     * In the `createParameters` method do the following:
     ```java
     final PluginParameter<SingleChoiceParameterValue> mergeType = SingleChoiceParameterType.build(MERGE_TYPE_PARAMETER_ID);
-    ```
-* QUERY_NAME_PARAMETER and DATETIME_RANGE_PARAMETER are defined as singletons within CoreGlobalParameters.java
-    * Can be accessed by referring to them directly, for example:
-    ```java
-    final PluginParameter<StringParameterValue> queryName = CoreGlobalParameters.QUERY_NAME_PARAMETER;
     ```
 * If you're using `javafx.stage.Stage` as a dialog, replace it with
 `ConstellationDialog` which makes sure your dialog remains on top (i.e is modal aware).

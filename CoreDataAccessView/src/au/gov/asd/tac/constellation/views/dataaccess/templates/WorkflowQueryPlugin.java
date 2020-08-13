@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,23 +21,22 @@ import au.gov.asd.tac.constellation.graph.ReadableGraph;
 import au.gov.asd.tac.constellation.graph.StoreGraph;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
-import au.gov.asd.tac.constellation.graph.schema.visual.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.graph.utilities.io.CopyGraphUtilities;
-import au.gov.asd.tac.constellation.plugins.Plugin;
-import au.gov.asd.tac.constellation.plugins.PluginException;
-import au.gov.asd.tac.constellation.plugins.PluginExecution;
-import au.gov.asd.tac.constellation.plugins.PluginGraphs;
-import au.gov.asd.tac.constellation.plugins.PluginInteraction;
-import au.gov.asd.tac.constellation.plugins.PluginNotificationLevel;
-import au.gov.asd.tac.constellation.plugins.PluginRegistry;
-import au.gov.asd.tac.constellation.plugins.gui.PluginParametersPane;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
-import au.gov.asd.tac.constellation.plugins.templates.SimpleEditPlugin;
-import au.gov.asd.tac.constellation.plugins.templates.SimplePlugin;
-import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
+import au.gov.asd.tac.constellation.pluginframework.Plugin;
+import au.gov.asd.tac.constellation.pluginframework.PluginException;
+import au.gov.asd.tac.constellation.pluginframework.PluginExecution;
+import au.gov.asd.tac.constellation.pluginframework.PluginGraphs;
+import au.gov.asd.tac.constellation.pluginframework.PluginInteraction;
+import au.gov.asd.tac.constellation.pluginframework.PluginNotificationLevel;
+import au.gov.asd.tac.constellation.pluginframework.PluginRegistry;
+import au.gov.asd.tac.constellation.pluginframework.gui.PluginParametersPane;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameter;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameters;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType.IntegerParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.templates.SimpleEditPlugin;
+import au.gov.asd.tac.constellation.pluginframework.templates.SimplePlugin;
+import au.gov.asd.tac.constellation.schema.visualschema.VisualSchemaPluginRegistry;
 import au.gov.asd.tac.constellation.views.dataaccess.GlobalParameters;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,9 +126,9 @@ public abstract class WorkflowQueryPlugin extends SimplePlugin {
         // if there were any errors, collect them and display them to the user
         if (!exceptions.isEmpty()) {
             final StringBuilder entireException = new StringBuilder();
-            entireException.append(workerFailCount[0]).append(" workers failed.").append(SeparatorConstants.NEWLINE);
+            entireException.append(workerFailCount[0]).append(" workers failed.").append("\n");
             exceptions.forEach(ex -> {
-                entireException.append(ex.getMessage()).append(SeparatorConstants.NEWLINE);
+                entireException.append(ex.getMessage()).append("\n");
             });
             throw new PluginException(PluginNotificationLevel.ERROR, entireException.toString());
         }
@@ -247,7 +246,7 @@ public abstract class WorkflowQueryPlugin extends SimplePlugin {
                 } catch (PluginException ex) {
                     wholeOfWorkflowExceptions.add(ex);
                     error = true;
-                    break;
+                    throw ex;
                 }
             }
 

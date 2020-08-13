@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import au.gov.asd.tac.constellation.graph.GraphAttribute;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
-import au.gov.asd.tac.constellation.graph.attribute.io.AbstractGraphIOProvider;
-import au.gov.asd.tac.constellation.graph.attribute.io.GraphByteReader;
-import au.gov.asd.tac.constellation.graph.attribute.io.GraphByteWriter;
-import au.gov.asd.tac.constellation.utilities.datastructure.ImmutableObjectCache;
+import au.gov.asd.tac.constellation.graph.io.providers.AbstractGraphIOProvider;
+import au.gov.asd.tac.constellation.graph.io.providers.GraphByteReader;
+import au.gov.asd.tac.constellation.graph.io.providers.GraphByteWriter;
+import au.gov.asd.tac.constellation.graph.utilities.ImmutableObjectCache;
 import au.gov.asd.tac.constellation.utilities.datastructure.Tuple;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,12 +42,6 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = AbstractGraphIOProvider.class)
 public class TableViewStateIoProvider extends AbstractGraphIOProvider {
 
-    private static final String ATTRIBUTE_ELEMENT_TYPE = "attributeElementType";
-    private static final String ATTRIBUTE_NAME = "attributeName";
-    private static final String ATTRIBUTE_PREFIX = "attributePrefix";
-    private static final String TRANSACTION_COLUMN_ATTRIBUTES = "transactionColumnAttributes";
-    private static final String VERTEX_COLUMN_ATTRIBUTES = "vertexColumnAttributes";
-
     @Override
     public String getName() {
         return TableViewConcept.MetaAttribute.TABLE_VIEW_STATE.getName();
@@ -62,26 +56,26 @@ public class TableViewStateIoProvider extends AbstractGraphIOProvider {
             final boolean selectedOnly = jnode.get("selectedOnly").asBoolean();
             final GraphElementType elementType = GraphElementType.valueOf(jnode.get("elementType").asText());
             final List<Tuple<String, Attribute>> transactionColumnAttributes = new ArrayList<>();
-            if (jnode.get(TRANSACTION_COLUMN_ATTRIBUTES) != null) {
-                final Iterator<JsonNode> attributeIterator = jnode.get(TRANSACTION_COLUMN_ATTRIBUTES).iterator();
+            if (jnode.get("transactionColumnAttributes") != null) {
+                final Iterator<JsonNode> attributeIterator = jnode.get("transactionColumnAttributes").iterator();
                 while (attributeIterator.hasNext()) {
                     final JsonNode attributeNode = attributeIterator.next();
-                    final String attributePrefix = attributeNode.get(ATTRIBUTE_PREFIX).asText();
+                    final String attributePrefix = attributeNode.get("attributePrefix").asText();
                     final Attribute attribute = new GraphAttribute(graph, graph.getAttribute(
-                            GraphElementType.valueOf(attributeNode.get(ATTRIBUTE_ELEMENT_TYPE).asText()),
-                            attributeNode.get(ATTRIBUTE_NAME).asText()));
+                            GraphElementType.valueOf(attributeNode.get("attributeElementType").asText()),
+                            attributeNode.get("attributeName").asText()));
                     transactionColumnAttributes.add(Tuple.create(attributePrefix, attribute));
                 }
             }
             final List<Tuple<String, Attribute>> vertexColumnAttributes = new ArrayList<>();
-            if (jnode.get(VERTEX_COLUMN_ATTRIBUTES) != null) {
-                final Iterator<JsonNode> attributeIterator = jnode.get(VERTEX_COLUMN_ATTRIBUTES).iterator();
+            if (jnode.get("vertexColumnAttributes") != null) {
+                final Iterator<JsonNode> attributeIterator = jnode.get("vertexColumnAttributes").iterator();
                 while (attributeIterator.hasNext()) {
                     final JsonNode attributeNode = attributeIterator.next();
-                    final String attributePrefix = attributeNode.get(ATTRIBUTE_PREFIX).asText();
+                    final String attributePrefix = attributeNode.get("attributePrefix").asText();
                     final Attribute attribute = new GraphAttribute(graph, graph.getAttribute(
-                            GraphElementType.valueOf(attributeNode.get(ATTRIBUTE_ELEMENT_TYPE).asText()),
-                            attributeNode.get(ATTRIBUTE_NAME).asText()));
+                            GraphElementType.valueOf(attributeNode.get("attributeElementType").asText()),
+                            attributeNode.get("attributeName").asText()));
                     vertexColumnAttributes.add(Tuple.create(attributePrefix, attribute));
                 }
             }
@@ -108,27 +102,27 @@ public class TableViewStateIoProvider extends AbstractGraphIOProvider {
                 jsonGenerator.writeBooleanField("selectedOnly", state.isSelectedOnly());
                 jsonGenerator.writeStringField("elementType", state.getElementType().name());
                 if (state.getTransactionColumnAttributes() == null) {
-                    jsonGenerator.writeNullField(TRANSACTION_COLUMN_ATTRIBUTES);
+                    jsonGenerator.writeNullField("transactionColumnAttributes");
                 } else {
-                    jsonGenerator.writeArrayFieldStart(TRANSACTION_COLUMN_ATTRIBUTES);
+                    jsonGenerator.writeArrayFieldStart("transactionColumnAttributes");
                     for (final Tuple<String, Attribute> columnAttribute : state.getTransactionColumnAttributes()) {
                         jsonGenerator.writeStartObject();
-                        jsonGenerator.writeStringField(ATTRIBUTE_PREFIX, columnAttribute.getFirst());
-                        jsonGenerator.writeStringField(ATTRIBUTE_ELEMENT_TYPE, columnAttribute.getSecond().getElementType().name());
-                        jsonGenerator.writeStringField(ATTRIBUTE_NAME, columnAttribute.getSecond().getName());
+                        jsonGenerator.writeStringField("attributePrefix", columnAttribute.getFirst());
+                        jsonGenerator.writeStringField("attributeElementType", columnAttribute.getSecond().getElementType().name());
+                        jsonGenerator.writeStringField("attributeName", columnAttribute.getSecond().getName());
                         jsonGenerator.writeEndObject();
                     }
                     jsonGenerator.writeEndArray();
                 }
                 if (state.getVertexColumnAttributes() == null) {
-                    jsonGenerator.writeNullField(VERTEX_COLUMN_ATTRIBUTES);
+                    jsonGenerator.writeNullField("vertexColumnAttributes");
                 } else {
-                    jsonGenerator.writeArrayFieldStart(VERTEX_COLUMN_ATTRIBUTES);
+                    jsonGenerator.writeArrayFieldStart("vertexColumnAttributes");
                     for (final Tuple<String, Attribute> columnAttribute : state.getVertexColumnAttributes()) {
                         jsonGenerator.writeStartObject();
-                        jsonGenerator.writeStringField(ATTRIBUTE_PREFIX, columnAttribute.getFirst());
-                        jsonGenerator.writeStringField(ATTRIBUTE_ELEMENT_TYPE, columnAttribute.getSecond().getElementType().name());
-                        jsonGenerator.writeStringField(ATTRIBUTE_NAME, columnAttribute.getSecond().getName());
+                        jsonGenerator.writeStringField("attributePrefix", columnAttribute.getFirst());
+                        jsonGenerator.writeStringField("attributeElementType", columnAttribute.getSecond().getElementType().name());
+                        jsonGenerator.writeStringField("attributeName", columnAttribute.getSecond().getName());
                         jsonGenerator.writeEndObject();
                     }
                     jsonGenerator.writeEndArray();

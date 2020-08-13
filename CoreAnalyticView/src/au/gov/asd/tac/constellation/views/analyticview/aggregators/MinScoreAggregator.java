@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.collections4.CollectionUtils;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -42,7 +41,7 @@ public class MinScoreAggregator implements AnalyticAggregator<ScoreResult> {
     public ScoreResult aggregate(final List<ScoreResult> results) {
         final ScoreResult aggregateResult = new ScoreResult();
 
-        if (CollectionUtils.isEmpty(results)) {
+        if (results == null || results.isEmpty()) {
             return aggregateResult;
         }
 
@@ -78,7 +77,7 @@ public class MinScoreAggregator implements AnalyticAggregator<ScoreResult> {
             }
 
             final Map<String, Float> aggregateScores = new HashMap<>();
-            aggregateScores.put(SCORE_NAME, scores.stream().reduce(Math::min).orElse((float) 0.0));
+            aggregateScores.put(SCORE_NAME, scores.stream().reduce((x, y) -> Math.min(x, y)).get());
 
             aggregateResult.add(new ElementScore(type, id, identifier, isNull, aggregateScores));
         }
@@ -92,7 +91,7 @@ public class MinScoreAggregator implements AnalyticAggregator<ScoreResult> {
     }
 
     @Override
-    public Class<? extends AnalyticResult<?>> getResultType() {
+    public Class<? extends AnalyticResult> getResultType() {
         return ScoreResult.class;
     }
 }

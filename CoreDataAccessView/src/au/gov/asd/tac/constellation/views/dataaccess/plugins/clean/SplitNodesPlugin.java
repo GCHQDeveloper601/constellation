@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +19,28 @@ import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.utilities.VertexDominanceCalculator;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaTransactionType;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaTransactionTypeUtilities;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexTypeUtilities;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import au.gov.asd.tac.constellation.plugins.Plugin;
-import au.gov.asd.tac.constellation.plugins.PluginInteraction;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
+import au.gov.asd.tac.constellation.graph.schema.SchemaTransactionType;
+import au.gov.asd.tac.constellation.graph.schema.SchemaTransactionTypeUtilities;
+import au.gov.asd.tac.constellation.graph.schema.SchemaVertexType;
+import au.gov.asd.tac.constellation.graph.schema.SchemaVertexTypeUtilities;
+import au.gov.asd.tac.constellation.graph.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.pluginframework.Plugin;
+import au.gov.asd.tac.constellation.pluginframework.PluginInteraction;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameter;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameters;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType.BooleanParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.ParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterValue;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.schema.analyticschema.utilities.VertexDominanceCalculator;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +92,7 @@ public class SplitNodesPlugin extends RecordStoreQueryPlugin implements DataAcce
         split.setStringValue(null);
         params.addParameter(split);
 
-        final PluginParameter<SingleChoiceParameterValue> transactionType = SingleChoiceParameterType.build(TRANSACTION_TYPE_PARAMETER_ID);
+        final PluginParameter<SingleChoiceParameterType.SingleChoiceParameterValue> transactionType = SingleChoiceParameterType.build(TRANSACTION_TYPE_PARAMETER_ID);
         transactionType.setName("Transaction Type");
         transactionType.setDescription("Set the type of transaction between nodes");
         params.addParameter(transactionType);
@@ -112,6 +110,7 @@ public class SplitNodesPlugin extends RecordStoreQueryPlugin implements DataAcce
     @Override
     public void updateParameters(Graph graph, PluginParameters parameters) {
         if (parameters != null && parameters.getParameters() != null) {
+            final PluginParameter transactionType = parameters.getParameters().get(TRANSACTION_TYPE_PARAMETER_ID);
             final List<String> types = new ArrayList<>();
             if (graph != null && graph.getSchema() != null) {
                 for (final SchemaTransactionType type : SchemaTransactionTypeUtilities.getTypes(graph.getSchema().getFactory().getRegisteredConcepts())) {
@@ -121,24 +120,22 @@ public class SplitNodesPlugin extends RecordStoreQueryPlugin implements DataAcce
                     types.sort(String::compareTo);
                 }
             }
-            @SuppressWarnings("unchecked") //TRANSACTION_TYPE_PARAMETER is always of type SingleChoiceParameter
-            final PluginParameter<SingleChoiceParameterValue> transactionType = (PluginParameter<SingleChoiceParameterValue>) parameters.getParameters().get(TRANSACTION_TYPE_PARAMETER_ID);
-            transactionType.suppressEvent(true, new ArrayList<>());
+            transactionType.suppressEvent(true, new ArrayList());
             SingleChoiceParameterType.setOptions(transactionType, types);
 
-            if (transactionType.getSingleChoice() == null && types.contains(AnalyticConcept.TransactionType.CORRELATION.getName())) {
-                SingleChoiceParameterType.setChoice(transactionType, AnalyticConcept.TransactionType.CORRELATION.getName());
+            if (types.contains("Correlation")) {
+                SingleChoiceParameterType.setChoice(transactionType, "Correlation");
             }
-            transactionType.suppressEvent(false, new ArrayList<>());
+            transactionType.suppressEvent(false, new ArrayList());
         }
     }
 
     private void editResultStore(final RecordStore result, final String left, final String right, final RecordStore query, final String linkType) {
         final HashMap<SchemaVertexType, String> types = new HashMap<>();
         final List<SchemaVertexType> leftVertexTypesMatches = new ArrayList<>(SchemaVertexTypeUtilities.matchVertexTypes(left));
-        leftVertexTypesMatches.sort((Comparator<? super SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator());
+        leftVertexTypesMatches.sort(VertexDominanceCalculator.getDefault().getComparator());
         final List<SchemaVertexType> rightVertexTypesMatches = new ArrayList<>(SchemaVertexTypeUtilities.matchVertexTypes(right));
-        rightVertexTypesMatches.sort((Comparator<? super SchemaVertexType>) VertexDominanceCalculator.getDefault().getComparator());
+        rightVertexTypesMatches.sort(VertexDominanceCalculator.getDefault().getComparator());
 
         if (leftVertexTypesMatches.size() > 0) {
             types.put(SchemaVertexTypeUtilities.matchVertexTypes(left).get(0), left);
@@ -155,21 +152,24 @@ public class SplitNodesPlugin extends RecordStoreQueryPlugin implements DataAcce
             result.set(GraphRecordStoreUtilities.SOURCE + AnalyticConcept.VertexAttribute.TYPE, leftVertexTypesMatches.get(0));
         }
         result.set(GraphRecordStoreUtilities.DESTINATION + VisualConcept.VertexAttribute.IDENTIFIER, right);
-
+        
         //Loops through all of the Node attributes and copies them to the new node
-        for (final String key : query.keys()) {
-            if (key.endsWith(".[id]") || SOURCE_IDENTIFIER.equals(key)) {
-                //Skips the id and Identifier to make the new node unique
-            } else if ((GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.X).equals(key)
-                    || (GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.Y).equals(key)
-                    || (GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.Z).equals(key)) {
-                //The coordinates are also skipped so that the second node is not created in the exact same location
-                //as the first node
-            } else {
-                result.set(GraphRecordStoreUtilities.DESTINATION + key.replace(GraphRecordStoreUtilities.SOURCE, ""), query.get(key));
+        query.reset();
+        while(query.next()){
+            for (final String key : query.keys()){
+                if(key.endsWith(".[id]") || SOURCE_IDENTIFIER.equals(key)) {
+                     //Skips the id and Identifier to make the new node unique
+                } else if ((GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.X).equals(key) 
+                        || (GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.Y).equals(key) 
+                        || (GraphRecordStoreUtilities.SOURCE + VisualConcept.VertexAttribute.Z).equals(key)){ 
+                    //The coordinates are also skipped so that the second node is not created in the exact same location
+                    //as the first node
+                } else {
+                     result.set(GraphRecordStoreUtilities.DESTINATION + key.replace(GraphRecordStoreUtilities.SOURCE, ""), query.get(key));
+                }
             }
         }
-
+        
         if (ordered_types.size() > 1 && rightVertexTypesMatches.size() > 0) {
             result.set(GraphRecordStoreUtilities.DESTINATION + AnalyticConcept.VertexAttribute.TYPE, rightVertexTypesMatches.get(0));
         }
@@ -181,9 +181,9 @@ public class SplitNodesPlugin extends RecordStoreQueryPlugin implements DataAcce
         final RecordStore result = new GraphRecordStore();
 
         final Map<String, PluginParameter<?>> splitParameters = parameters.getParameters();
-        final String character = splitParameters.get(SPLIT_PARAMETER_ID) != null && splitParameters.get(SPLIT_PARAMETER_ID).getStringValue() != null ? splitParameters.get(SPLIT_PARAMETER_ID).getStringValue() : "";
+        final String character = splitParameters.get(SPLIT_PARAMETER_ID).getStringValue();
         final ParameterValue transactionTypeChoice = splitParameters.get(TRANSACTION_TYPE_PARAMETER_ID).getSingleChoice();
-        final String linkType = transactionTypeChoice != null ? transactionTypeChoice.toString() : AnalyticConcept.TransactionType.CORRELATION.getName();
+        final String linkType = transactionTypeChoice != null ? transactionTypeChoice.toString() : "Correlation";
         final boolean allOccurrences = splitParameters.get(ALL_OCCURRENCES_PARAMETER_ID).getBooleanValue();
 
         query.reset();

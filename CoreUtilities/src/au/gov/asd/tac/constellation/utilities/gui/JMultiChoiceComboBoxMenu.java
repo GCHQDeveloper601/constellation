@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +156,6 @@ public class JMultiChoiceComboBoxMenu<E> extends JComponent implements ListSelec
         }
     }
 
-    @SuppressWarnings("unchecked")
     public final void setSelectedItems(final E... items) {
         if (items != null) {
             clearSelection();
@@ -177,7 +176,6 @@ public class JMultiChoiceComboBoxMenu<E> extends JComponent implements ListSelec
         }
     }
 
-    @SuppressWarnings("unchecked")
     public final void addSelectedItems(final E... items) {
         if (items != null) {
             for (final E item : items) {
@@ -197,7 +195,6 @@ public class JMultiChoiceComboBoxMenu<E> extends JComponent implements ListSelec
         }
     }
 
-    @SuppressWarnings("unchecked")
     public final void removeSelectedItems(final E... items) {
         if (items != null) {
             for (final E item : items) {

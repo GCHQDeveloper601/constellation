@@ -1,6 +1,6 @@
 <p align="center">
   <img src="./docs/constellation-logo.png"/>
-</p>
+  </p>
 <p align="center">
   <a href="https://travis-ci.com/constellation-app/constellation" alt="travis-ci">
     <img src="https://travis-ci.com/constellation-app/constellation.svg?branch=master"/>
@@ -51,8 +51,11 @@ networks, network infrastructure, chemical composition, etc.
 
 ## Prerequisites
 
+* Constellation is known to work on Windows 64-bit and Linux 64-bit. There is 
+currently no support for Mac and the feature request is tracked by 
+[Issue #21](https://github.com/constellation-app/constellation/issues/21).
 * The OpenGL graph display works with NVIDIA and ATI graphics cards that support
-OpenGL 3.3 or later. It is known to not work with older Intel on-board graphics cards.
+OpenGL 3.3 or later. It is known to not work with Intel on-board graphics cards.
 
 ## Download Constellation
 
@@ -60,52 +63,44 @@ Download Constellation by going to the [release page](https://github.com/constel
 
 ## Run Constellation
 
-Unzip the constellation.zip bundle and double click the `constellation64.bat` 
-for Windows or run the `bin\constellation` shell script for Linux and MacOSX.
+Unzip the constellation.zip bundle and double click the `bin/constellation64.exe` 
+for Windows or run the `bin\constellation` shell script for Linux.
+
+There is currently no support for Mac and the feature request is tracked by 
+[Issue #21](https://github.com/constellation-app/constellation/issues/21).
 
 ## Build Constellation
 
+* Constellation requires at least Open JDK 8 with JFX 8 support build to be 
+installed and is known to work on Windows 64-bit and Linux 64-bit.
+
 To build Constellation from source code do the following:
 
-* Download Azul's Zulu distribution of JDK 11 with JFX 11, either the 
-[Windows 64 bit](https://cdn.azul.com/zulu/bin/zulu11.37.19-ca-fx-jre11.0.6-win_x64.zip),
-[Linux 64 bit](https://cdn.azul.com/zulu/bin/zulu11.37.19-ca-fx-jre11.0.6-linux_x64.tar.gz)
-or [MacOSX 64 bit](https://cdn.azul.com/zulu/bin/zulu11.37.19-ca-fx-jre11.0.6-macosx_x64.tar.gz)
-
-* Download [NetBeans 12](https://netbeans.apache.org/download/nb120/nb120.html)
-* Update `netbeans_jdkhome` in netbeans.conf to point to the Azul Zulu JDK you 
-downloaded (e.g. `C:\Program Files\NetBeans-12\netbeans\etc`)
-* Apache NetBeans dropped support for the Java Help system but is still required 
-by Constellation. Until we find a solution to #15 there are 2 jar files that 
-have to be manually copied into the NetBeans installation folder.
-  * Download [org-netbeans-modules-javahelp.jar](https://github.com/constellation-app/third-party-dependencies/blob/master/NetBeans%20Help/org-netbeans-modules-javahelp.jar?raw=true) to `C:\Program Files\NetBeans 12\platform\modules` (using Windows as an example). Note that you will need to override this file when prompted.
-  * Download [jhall-2.0_05.jar](https://github.com/constellation-app/third-party-dependencies/blob/master/NetBeans%20Help/jhall-2.0_05.jar?raw=true) to `C:\Program Files\NetBeans 12\netbeans\platform\modules\ext` (using Windows as an example)
+* Download NetBeans 8.2 (https://netbeans.org/downloads/old/8.2)
+* Download the Open JDK 8 with JFX 8 from Azul website for 
+[Windows 64 bit build](https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-fx-jdk8.0.212-win_x64.zip) 
+or [Linux 64 bit build](https://cdn.azul.com/zulu/bin/zulu8.38.0.13-ca-fx-jdk8.0.212-linux_x64.tar.gz)
 * Clone this repository
-* Open the Constellation module suite from NetBeans
+* Update the `netbeans_jdkhome` variable in `netbeans.conf`. Hint: This file may 
+be located at `C:\Program Files\NetBeans 8.2\etc`.
+* Open the Constellation_Core module suite from NetBeans
 * In the Projects view, expand `Important Files` > `Build Script` > Right click > 
-`Update dependencies and clean build`. This can take around 20 minutes to 
-download the first time depending on your internet connection so feel free to 
-get a :coffee: and come back later.
-* Start Constellation by right clicking on `Constellation` > `Run`
+`Update dependencies and clean build`
+* Right click > `Run`
 
 ## Package Constellation
 
 To package Constellation in a zip bundle do the following:
 
-* In NetBeans, expand `Constellation` > `Important Files`
-* Right click on `Build Script` and run the `build-zip`
-* Navigate to the `dist` folder to get `constellation.zip` file
-* If you want to use a specific JRE (e.g. `zulu11.37.19-ca-fx-jre11.0.6-win_x64`) 
-then copy this to the same level as the `bin` folder and call it `jre`. This is 
-the default folder name Constellation expects but you can change this from 
-`etc\constellation.conf`.
+* In NetBeans, expand `Constellation_Core` > `Important Files`
+* Right click on `Build Script` and run the `build-zip-with-windows-jre` or 
+`build-zip-with-linux-jre` target
 
-Note that Constellation "Core" (which is this repository) is designed to be 
-domain agnostic and work standalone. The version of Constellation available for 
-download from [the official website](https://constellation-app.com) is built 
-with additional plugins and managed via the [Constellation-Applications](https://github.com/constellation-app/constellation-applications) repository.
+The packaged file should be available from the `dist` directory.
 
 ## Contributing to Constellation
+
+***Please note that all development effort is focused on upgrading Constellation to NetBeans 11 with support for Java 11. Please make sure that contributions are aligned with the branch master-nb11.***
 
 For more information please see the [contributing guide](CONTRIBUTING.md).
 

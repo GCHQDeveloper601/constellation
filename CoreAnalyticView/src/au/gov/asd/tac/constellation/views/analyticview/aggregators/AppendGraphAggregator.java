@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import au.gov.asd.tac.constellation.views.analyticview.results.AnalyticResult;
 import au.gov.asd.tac.constellation.views.analyticview.results.GraphResult;
 import au.gov.asd.tac.constellation.views.analyticview.results.GraphResult.GraphScore;
 import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -35,7 +34,7 @@ public class AppendGraphAggregator implements AnalyticAggregator<GraphResult> {
     public GraphResult aggregate(final List<GraphResult> results) {
         final GraphResult aggregateResult = new GraphResult();
 
-        if (CollectionUtils.isEmpty(results)) {
+        if (results == null || results.isEmpty()) {
             return aggregateResult;
         }
 
@@ -57,7 +56,7 @@ public class AppendGraphAggregator implements AnalyticAggregator<GraphResult> {
     }
 
     @Override
-    public Class<? extends AnalyticResult<?>> getResultType() {
+    public Class<? extends AnalyticResult> getResultType() {
         return GraphResult.class;
     }
 }

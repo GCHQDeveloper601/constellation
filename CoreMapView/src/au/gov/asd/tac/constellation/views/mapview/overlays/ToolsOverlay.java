@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package au.gov.asd.tac.constellation.views.mapview.overlays;
 
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
-import au.gov.asd.tac.constellation.plugins.PluginException;
-import au.gov.asd.tac.constellation.plugins.PluginExecution;
+import au.gov.asd.tac.constellation.pluginframework.PluginException;
+import au.gov.asd.tac.constellation.pluginframework.PluginExecution;
 import au.gov.asd.tac.constellation.utilities.geospatial.Distance;
 import au.gov.asd.tac.constellation.views.mapview.MapViewPluginRegistry;
 import static au.gov.asd.tac.constellation.views.mapview.MapViewTileRenderer.LOCK;
@@ -51,7 +51,6 @@ import processing.event.MouseEvent;
 public class ToolsOverlay extends MapOverlay {
 
     private static final Logger LOGGER = Logger.getLogger(ToolsOverlay.class.getName());
-    private static final String DISABLED = "Disabled";
 
     private enum MeasurementSystem {
 
@@ -103,6 +102,10 @@ public class ToolsOverlay extends MapOverlay {
     private int drawDeltaX = -1;
     private int drawDeltaY = -1;
 
+    public ToolsOverlay() {
+        this.enabled = false;
+    }
+
     @Override
     public String getName() {
         return "Tools Overlay";
@@ -133,7 +136,7 @@ public class ToolsOverlay extends MapOverlay {
     }
 
     private Location getDrawToolStart() {
-        if (drawOriginX == -1 && drawOriginY == -1) {
+        if (drawOriginX == -1 && drawOriginX == -1) {
             return null;
         }
         return map.getLocation(drawOriginX, drawOriginY);
@@ -193,7 +196,7 @@ public class ToolsOverlay extends MapOverlay {
                 float distance = measureSystem.getMeasureFunction().apply(start, end).floatValue();
                 drawValue(String.format("%s", PApplet.nf(distance, 1, 3)), measureToolX, yOffset, measureToolWidth, false, false);
             } else {
-                drawValue(DISABLED, measureToolX, yOffset, measureToolWidth, false, false);
+                drawValue("Disabled", measureToolX, yOffset, measureToolWidth, false, false);
             }
         } else if (measureActive) {
             final Location start = getMeasureToolStart();
@@ -212,7 +215,7 @@ public class ToolsOverlay extends MapOverlay {
                 drawValue("Enabled", measureToolX, yOffset, measureToolWidth, false, true);
             }
         } else {
-            drawValue(DISABLED, measureToolX, yOffset, measureToolWidth, false, false);
+            drawValue("Disabled", measureToolX, yOffset, measureToolWidth, false, false);
         }
 
         // update map based on measure tool state
@@ -284,11 +287,8 @@ public class ToolsOverlay extends MapOverlay {
                     });
 
                     renderer.updateMarkers(GraphManager.getDefault().getActiveGraph(), renderer.getMarkerState());
-                } catch (PluginException ex) {
+                } catch (PluginException | InterruptedException ex) {
                     LOGGER.log(Level.SEVERE, "Error copying custom markers to graph", ex);
-                } catch (InterruptedException ex) {
-                    LOGGER.log(Level.SEVERE, "Error copying custom markers to graph", ex);
-                    Thread.currentThread().interrupt();
                 }
                 mouseLeftAddToGraphRegion = false;
             }
@@ -318,7 +318,7 @@ public class ToolsOverlay extends MapOverlay {
                     + " > Click on a drawn marker to remove it.";
             drawInfo(drawDescription, yOffset - (padding * 2), width - (margin * 2) - (padding * 2), true);
         } else {
-            drawValue(DISABLED, drawToolX, yOffset, drawToolWidth, false, false);
+            drawValue("Disabled", drawToolX, yOffset, drawToolWidth, false, false);
         }
 
         // update map based on draw tool state
@@ -358,8 +358,6 @@ public class ToolsOverlay extends MapOverlay {
                 }
             }
         }
-
-        active = measureActive || drawActive;
     }
 
     @Override

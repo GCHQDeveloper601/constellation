@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package au.gov.asd.tac.constellation.utilities.temporal;
 
-import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
+import au.gov.asd.tac.constellation.utilities.string.SeparatorConstants;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -94,9 +94,9 @@ public class TemporalFormatting {
             .appendValue(ChronoField.DAY_OF_MONTH, 2)
             .appendLiteral("T")
             .appendValue(ChronoField.HOUR_OF_DAY, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
             .appendLiteral("Z")
             .toFormatter()
@@ -115,9 +115,9 @@ public class TemporalFormatting {
             .appendValue(ChronoField.DAY_OF_MONTH, 2)
             .appendLiteral("T")
             .appendValue(ChronoField.HOUR_OF_DAY, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
             .appendLiteral(SeparatorConstants.PERIOD)
             .appendValue(ChronoField.MILLI_OF_SECOND, 3)
@@ -141,9 +141,9 @@ public class TemporalFormatting {
      */
     public static final DateTimeFormatter TIME_FORMATTER = new DateTimeFormatterBuilder()
             .appendValue(ChronoField.HOUR_OF_DAY, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-            .appendLiteral(SeparatorConstants.COLON)
+            .appendLiteral(":")
             .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
             .appendLiteral(SeparatorConstants.PERIOD)
             .appendValue(ChronoField.MILLI_OF_SECOND, 3)
@@ -299,8 +299,6 @@ public class TemporalFormatting {
                 dateTimeStringBuilder.append("-01");
             case YEAR_MONTH_FORMAT_LENGTH:
                 dateTimeStringBuilder.append("-01");
-            default:
-                break;
         }
     }
 
@@ -316,8 +314,6 @@ public class TemporalFormatting {
                 dateTimeStringBuilder.append(":00");
             case HMS_FORMAT_LENGTH:
                 dateTimeStringBuilder.append(".000");
-            default:
-                break;
         }
     }
 
@@ -333,15 +329,14 @@ public class TemporalFormatting {
                 dateTimeStringBuilder.append(":00");
             case DATE_HMS_FORMAT_LENGTH:
                 dateTimeStringBuilder.append(".000");
-            default:
-                break;
         }
     }
 
     private static void completeZoneInDateTimeString(final StringBuilder dateTimeStringBuilder) {
         final int currentLength = dateTimeStringBuilder.length();
-        if (currentLength == DATE_TIME_FORMAT_LENGTH) {
-            dateTimeStringBuilder.append(" +00:00 [UTC]");
+        switch (currentLength) {
+            case DATE_TIME_FORMAT_LENGTH:
+                dateTimeStringBuilder.append(" +00:00 [UTC]");
         }
     }
 
@@ -473,11 +468,11 @@ public class TemporalFormatting {
             ZoneId parsedTimeZone = myDateTime.query(TemporalQueries.zoneId());
             ZoneOffset parsedOffset = myDateTime.query(TemporalQueries.offset());
             if ((parsedTimeZone != null) || (parsedOffset != null)) {
-                ZonedDateTime myZonedDateTime = ZonedDateTime.parse(value, formatter);
+                ZonedDateTime myZonedDateTime  = ZonedDateTime.parse(value, formatter);
                 return TemporalFormatting.ZONED_DATE_TIME_FORMATTER.format(myZonedDateTime);
-            } else {
-                return TemporalFormatting.formatAsZonedDateTime(formatter.parse(value));
-            }
+            } else { 
+               return TemporalFormatting.formatAsZonedDateTime(formatter.parse(value));
+            }    
         } catch (DateTimeParseException ex) {
             logger.log(Level.SEVERE, ERROR_PARSING_DATE_MESSAGE, new Object[]{value, ex.getMessage()});
             return value;

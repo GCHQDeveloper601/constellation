@@ -8,7 +8,7 @@
 
 
 .text-area .scroll-bar {
-    -fx-skin: ""; /* javafx.scene.control.skin.ScrollBarSkin"; */
+    -fx-skin: ""; /* com.sun.javafx.scene.control.skin.ScrollBarSkin"; */
     width: 0;
     display: none;
 }
@@ -35,6 +35,10 @@
 }
 
 .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
     -fx-background-color: transparent;
 }
 

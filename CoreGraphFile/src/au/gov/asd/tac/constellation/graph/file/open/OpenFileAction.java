@@ -80,8 +80,11 @@ public class OpenFileAction implements ActionListener {
      */
     private static File currentDirectory = null;
 
+    public OpenFileAction() {
+    }
+
     private HelpCtx getHelpCtx() {
-        return new HelpCtx(this.getClass().getName());
+        return new HelpCtx(OpenFileAction.class);
     }
 
     /**
@@ -140,8 +143,8 @@ public class OpenFileAction implements ActionListener {
             } catch (UserCancelException ex) {
                 return;
             }
-            for (File file : files) {
-                OpenFile.openFile(file, -1);
+            for (int i = 0; i < files.length; i++) {
+                OpenFile.openFile(files[i], -1);
             }
         } finally {
             running = false;

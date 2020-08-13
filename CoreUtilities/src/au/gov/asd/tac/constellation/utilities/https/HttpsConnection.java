@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package au.gov.asd.tac.constellation.utilities.https;
 
 import au.gov.asd.tac.constellation.security.ConstellationSecurityManager;
-import au.gov.asd.tac.constellation.utilities.BrandingUtilities;
+import au.gov.asd.tac.constellation.utilities.branding.BrandingUtilities;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -87,7 +87,7 @@ public class HttpsConnection {
      * @throws MalformedURLException if the given URL is malformed.
      * @throws IOException if an error occurs while making the connection.
      */
-    public static HttpsConnection withUrl(String url) throws IOException {
+    public static HttpsConnection withUrl(String url) throws MalformedURLException, IOException {
         LOGGER.log(Level.FINE, "Connecting to url {0}", url);
         return new HttpsConnection(new URL(url), true);
     }
@@ -100,7 +100,7 @@ public class HttpsConnection {
      * @throws MalformedURLException if the given URL is malformed.
      * @throws IOException if an error occurs while making the connection.
      */
-    public static HttpsConnection withInsecureUrl(String url) throws IOException {
+    public static HttpsConnection withInsecureUrl(String url) throws MalformedURLException, IOException {
         LOGGER.log(Level.FINE, "Connecting to url {0}", url);
         return new HttpsConnection(new URL(url), false);
     }
@@ -273,7 +273,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support POST.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpURLConnection insecurePost() throws IOException {
+    public HttpURLConnection insecurePost() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("POST");
         httpConnection.connect();
         return httpConnection;
@@ -286,7 +286,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support POST.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpsURLConnection post() throws IOException {
+    public HttpsURLConnection post() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("POST");
         httpConnection.connect();
         return ((HttpsURLConnection) httpConnection);
@@ -299,7 +299,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support GET.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpURLConnection insecureGet() throws IOException {
+    public HttpURLConnection insecureGet() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("GET");
         httpConnection.connect();
         return httpConnection;
@@ -312,7 +312,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support GET.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpsURLConnection get() throws IOException {
+    public HttpsURLConnection get() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("GET");
         httpConnection.connect();
         return ((HttpsURLConnection) httpConnection);
@@ -325,7 +325,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support PUT.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpURLConnection insecurePut() throws IOException {
+    public HttpURLConnection insecurePut() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("PUT");
         httpConnection.connect();
         return httpConnection;
@@ -338,7 +338,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support PUT.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpsURLConnection put() throws IOException {
+    public HttpsURLConnection put() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("PUT");
         httpConnection.connect();
         return ((HttpsURLConnection) httpConnection);
@@ -351,7 +351,7 @@ public class HttpsConnection {
      * @throws ProtocolException if the connection does not support DELETE.
      * @throws IOException if an error occurs while connecting.
      */
-    public HttpsURLConnection delete() throws IOException {
+    public HttpsURLConnection delete() throws ProtocolException, IOException {
         httpConnection.setRequestMethod("DELETE");
         httpConnection.connect();
         return ((HttpsURLConnection) httpConnection);

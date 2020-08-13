@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,48 +15,47 @@
  */
 package au.gov.asd.tac.constellation.testing.construction;
 
+import au.gov.asd.tac.constellation.arrangements.ArrangementPluginRegistry;
+import au.gov.asd.tac.constellation.functionality.CorePluginRegistry;
+import au.gov.asd.tac.constellation.utilities.preferences.PreferenceUtilites;
 import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
 import au.gov.asd.tac.constellation.graph.ReadableGraph;
-import au.gov.asd.tac.constellation.graph.attribute.BooleanAttributeDescription;
-import au.gov.asd.tac.constellation.graph.interaction.InteractiveGraphPluginRegistry;
 import au.gov.asd.tac.constellation.graph.manager.GraphManager;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.SpatialConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaTransactionType;
-import au.gov.asd.tac.constellation.graph.schema.type.SchemaVertexType;
-import au.gov.asd.tac.constellation.graph.schema.visual.VertexDecorators;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import au.gov.asd.tac.constellation.plugins.Plugin;
-import au.gov.asd.tac.constellation.plugins.PluginException;
-import au.gov.asd.tac.constellation.plugins.PluginExecution;
-import au.gov.asd.tac.constellation.plugins.PluginExecutor;
-import au.gov.asd.tac.constellation.plugins.PluginInteraction;
-import au.gov.asd.tac.constellation.plugins.arrangements.ArrangementPluginRegistry;
-import au.gov.asd.tac.constellation.plugins.parameters.ParameterChange;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FloatParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FloatParameterType.FloatParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
-import au.gov.asd.tac.constellation.plugins.templates.SimpleEditPlugin;
-import au.gov.asd.tac.constellation.preferences.utilities.PreferenceUtilites;
-import java.security.SecureRandom;
+import au.gov.asd.tac.constellation.graph.schema.SchemaTransactionType;
+import au.gov.asd.tac.constellation.graph.schema.SchemaVertexType;
+import au.gov.asd.tac.constellation.graph.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.pluginframework.Plugin;
+import au.gov.asd.tac.constellation.pluginframework.PluginException;
+import au.gov.asd.tac.constellation.pluginframework.PluginExecution;
+import au.gov.asd.tac.constellation.pluginframework.PluginExecutor;
+import au.gov.asd.tac.constellation.pluginframework.PluginInteraction;
+import au.gov.asd.tac.constellation.pluginframework.parameters.ParameterChange;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameter;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameters;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType.BooleanParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FloatParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FloatParameterType.FloatParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType.IntegerParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.MultiChoiceParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.templates.SimpleEditPlugin;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.SpatialConcept;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.TemporalConcept;
+import au.gov.asd.tac.constellation.visual.decorators.Decorators;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
@@ -81,10 +80,6 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
     public static final String RANDOM_WEIGHTS_PARAMETER_ID = PluginParameter.buildId(SmallWorldGraphBuilderPlugin.class, "random_weights");
     public static final String NODE_TYPES_PARAMETER_ID = PluginParameter.buildId(SmallWorldGraphBuilderPlugin.class, "node_types");
     public static final String TRANSACTION_TYPES_PARAMETER_ID = PluginParameter.buildId(SmallWorldGraphBuilderPlugin.class, "transaction_types");
-
-    private static final String CONNECTED = "connected";
-
-    private final SecureRandom r = new SecureRandom();
 
     @Override
     public String getDescription() {
@@ -120,7 +115,7 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         ArrayList<String> modes = new ArrayList<>();
         modes.add("Default");
         modes.add("Newman");
-        modes.add(CONNECTED);
+        modes.add("Connected");
 
         final PluginParameter<SingleChoiceParameterValue> buildMode = SingleChoiceParameterType.build(BUILD_MODE_PARAMETER_ID);
         buildMode.setName("Build mode");
@@ -156,7 +151,11 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         params.addController(BUILD_MODE_PARAMETER_ID, (master, parameters, change) -> {
             if (change == ParameterChange.VALUE) {
                 final String mode = master.getStringValue();
-                parameters.get(T_PARAMETER_ID).setEnabled(mode.equals(CONNECTED));
+                if (mode.equals("Connected")) {
+                    parameters.get(T_PARAMETER_ID).setEnabled(true);
+                } else {
+                    parameters.get(T_PARAMETER_ID).setEnabled(false);
+                }
             }
         });
 
@@ -194,10 +193,8 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         }
 
         if (parameters != null && parameters.getParameters() != null) {
-            @SuppressWarnings("unchecked") //NODE_TYPES_PARAMETER will always be of type MultiChoiceParameter
-            final PluginParameter<MultiChoiceParameterValue> nAttribute = (PluginParameter<MultiChoiceParameterValue>) parameters.getParameters().get(NODE_TYPES_PARAMETER_ID);
-            @SuppressWarnings("unchecked") //TRANSACTION_TYPES_PARAMETER will always be of type MultiChoiceParameter
-            final PluginParameter<MultiChoiceParameterValue> tAttribute = (PluginParameter<MultiChoiceParameterValue>) parameters.getParameters().get(TRANSACTION_TYPES_PARAMETER_ID);
+            final PluginParameter nAttribute = parameters.getParameters().get(NODE_TYPES_PARAMETER_ID);
+            final PluginParameter tAttribute = parameters.getParameters().get(TRANSACTION_TYPES_PARAMETER_ID);
             MultiChoiceParameterType.setOptions(nAttribute, nAttributes);
             MultiChoiceParameterType.setOptions(tAttribute, tAttributes);
             MultiChoiceParameterType.setChoices(nAttribute, nChoices);
@@ -208,6 +205,8 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
     @Override
     public void edit(final GraphWriteMethods graph, final PluginInteraction interaction, final PluginParameters parameters) throws InterruptedException, PluginException {
         interaction.setProgress(0, 0, "Building...", true);
+
+        final Random r = new Random();
 
         final Map<String, PluginParameter<?>> params = parameters.getParameters();
 
@@ -238,15 +237,15 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         final int vxIdentifierAttr = VisualConcept.VertexAttribute.IDENTIFIER.ensure(graph);
         final int vxTypeAttr = AnalyticConcept.VertexAttribute.TYPE.ensure(graph);
 
-        final int vxIsGoodAttr = graph.addAttribute(GraphElementType.VERTEX, BooleanAttributeDescription.ATTRIBUTE_NAME, "isGood", null, false, null);
+        final int vxIsGoodAttr = graph.addAttribute(GraphElementType.VERTEX, "boolean", "isGood", null, false, null);
         final int vxCountryAttr = SpatialConcept.VertexAttribute.COUNTRY.ensure(graph);
 
         final int txIdAttr = VisualConcept.TransactionAttribute.IDENTIFIER.ensure(graph);
         final int txTypeAttr = AnalyticConcept.TransactionAttribute.TYPE.ensure(graph);
         final int txDateTimeAttr = TemporalConcept.TransactionAttribute.DATETIME.ensure(graph);
 
-        final VertexDecorators decorators;
-        decorators = new VertexDecorators(null, graph.getAttributeName(vxCountryAttr), null, graph.getAttributeName(vxIsGoodAttr));
+        final Decorators decorators;
+        decorators = new Decorators(null, graph.getAttributeName(vxCountryAttr), null, graph.getAttributeName(vxIsGoodAttr));
         final int decoratorsAttr = VisualConcept.GraphAttribute.DECORATORS.ensure(graph);
         graph.setObjectValue(decoratorsAttr, 0, decorators);
 
@@ -255,7 +254,7 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         final int fourDays = 4 * 24 * 60 * 60 * 1000;
 
         int initialComponents = 0;
-        if (buildMode.equals(CONNECTED)) {
+        if (buildMode.equals("Connected")) {
             initialComponents = componentCount(graph);
         }
 
@@ -353,27 +352,30 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
                     int dxId = graph.getTransactionDestinationVertex(txId);
                     if (randomWeights) {
                         switch (reciprocity) {
-                            case 0:
-                                boolean random0 = r.nextBoolean();
-                                if (random0) {
+                            case 0: {
+                                boolean random = r.nextBoolean();
+                                if (random) {
                                     sxId = graph.getTransactionDestinationVertex(txId);
                                     dxId = graph.getTransactionSourceVertex(txId);
                                 }
                                 break;
-                            case 1:
-                                int random1 = r.nextInt(5);
-                                if (random1 == 0) {
+                            }
+                            case 1: {
+                                int random = r.nextInt(5);
+                                if (random == 0) {
                                     sxId = graph.getTransactionDestinationVertex(txId);
                                     dxId = graph.getTransactionSourceVertex(txId);
                                 }
                                 break;
-                            default:
-                                int randomDefault = r.nextInt(5);
-                                if (randomDefault != 0) {
+                            }
+                            default: {
+                                int random = r.nextInt(5);
+                                if (random != 0) {
                                     sxId = graph.getTransactionDestinationVertex(txId);
                                     dxId = graph.getTransactionSourceVertex(txId);
                                 }
                                 break;
+                            }
                         }
                     }
                     final int e = graph.addTransaction(sxId, dxId, true);
@@ -390,9 +392,13 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
                 graph.removeTransaction(txId);
             }
 
-            if (buildMode.equals(CONNECTED) && componentCount(graph) != initialComponents + 1 && s != t) {
-                for (int vxId : vxIds) {
-                    graph.removeVertex(vxId);
+            if (buildMode.equals("Connected") && componentCount(graph) != initialComponents + 1) {
+                if (s == t) {
+                    break;
+                } else {
+                    for (int vxId : vxIds) {
+                        graph.removeVertex(vxId);
+                    }
                 }
             } else {
                 break;
@@ -400,21 +406,23 @@ public class SmallWorldGraphBuilderPlugin extends SimpleEditPlugin {
         }
 
         if (!PreferenceUtilites.isGraphViewFrozen()) {
-            try {
-                if (n < 10000) {
-                    // Do a trees layout.
-                    PluginExecutor.startWith(ArrangementPluginRegistry.TREES)
-                            .followedBy(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(graph);
-                } else {
-                    // Do a grid layout.
-                    PluginExecutor.startWith(ArrangementPluginRegistry.GRID_COMPOSITE)
-                            .followedBy(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(graph);
+            if (n < 10000) {
+                // Do a trees layout.
+                try {
+                    PluginExecutor.startWith(ArrangementPluginRegistry.TREES).followedBy(CorePluginRegistry.RESET).executeNow(graph);
+                } catch (PluginException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } catch (PluginException ex) {
-                Exceptions.printStackTrace(ex);
+            } else {
+                // Do a grid layout.
+                try {
+                    PluginExecutor.startWith(ArrangementPluginRegistry.GRID_COMPOSITE).followedBy(CorePluginRegistry.RESET).executeNow(graph);
+                } catch (PluginException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
         } else {
-            PluginExecution.withPlugin(InteractiveGraphPluginRegistry.RESET_VIEW).executeNow(graph);
+            PluginExecution.withPlugin(CorePluginRegistry.RESET).executeNow(graph);
         }
 
         interaction.setProgress(1, 0, "Completed successfully", true);

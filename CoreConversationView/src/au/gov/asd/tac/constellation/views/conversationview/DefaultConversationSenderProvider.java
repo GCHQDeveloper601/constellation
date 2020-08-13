@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@ package au.gov.asd.tac.constellation.views.conversationview;
 import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphReadMethods;
-import au.gov.asd.tac.constellation.graph.schema.visual.concept.VisualConcept;
-import au.gov.asd.tac.constellation.utilities.icon.ConstellationIcon;
-import au.gov.asd.tac.constellation.utilities.icon.IconManager;
-import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
+import au.gov.asd.tac.constellation.graph.visual.concept.VisualConcept;
+import au.gov.asd.tac.constellation.utilities.string.SeparatorConstants;
+import au.gov.asd.tac.constellation.visual.icons.ConstellationIcon;
+import au.gov.asd.tac.constellation.visual.icons.IconManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,7 +32,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javax.swing.SwingUtilities;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * The DefaultConversationSenderProvider creates a sender display based on the
@@ -44,8 +41,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author sirius
  */
 public class DefaultConversationSenderProvider implements ConversationSenderProvider {
-
-    private static final Logger LOGGER = Logger.getLogger(DefaultConversationSenderProvider.class.getName());
 
     @Override
     public void updateMessageSenders(GraphReadMethods graph, List<ConversationMessage> messages, List<String> senderAttributes) {
@@ -72,7 +67,7 @@ public class DefaultConversationSenderProvider implements ConversationSenderProv
 
                 for (int senderAttributeId : senderAttributeIds) {
                     final String senderLabel = graph.getStringValue(senderAttributeId, message.getSender());
-                    if (StringUtils.isBlank(senderLabel)) {
+                    if (senderLabel == null || senderLabel.isEmpty()) {
                         senderLabels.add(SeparatorConstants.HYPHEN);
                     } else {
                         senderLabels.add(senderLabel);
@@ -99,7 +94,7 @@ public class DefaultConversationSenderProvider implements ConversationSenderProv
             }
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+            ex.printStackTrace();
         }
     }
 
@@ -140,7 +135,7 @@ public class DefaultConversationSenderProvider implements ConversationSenderProv
                     region = borderPane;
                 }
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+                ex.printStackTrace();
             }
 
             return region;

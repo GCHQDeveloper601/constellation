@@ -103,13 +103,16 @@ public final class RecentFiles {
      * Starts to listen for recently closed files
      */
     public static void init() {
-        WindowManager.getDefault().invokeWhenUIReady(() -> {
-            final List<HistoryItem> loaded = load();
-            synchronized (HISTORY_LOCK) {
-                HISTORY.addAll(0, loaded);
+        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+            @Override
+            public void run() {
+                final List<HistoryItem> loaded = load();
+                synchronized (HISTORY_LOCK) {
+                    HISTORY.addAll(0, loaded);
+                }
+                TopComponent.getRegistry().
+                        addPropertyChangeListener(RECENT_FILE_SAVED);
             }
-            TopComponent.getRegistry().
-                    addPropertyChangeListener(RECENT_FILE_SAVED);
         });
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package au.gov.asd.tac.constellation.utilities.support;
 
-import au.gov.asd.tac.constellation.utilities.gui.NotifyDisplayer;
-import au.gov.asd.tac.constellation.utilities.text.StringUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,6 +22,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JFileChooser;
+import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -36,8 +35,7 @@ import org.openide.windows.WindowManager;
         id = "au.gov.asd.tac.constellation.utilities.support.SupportPackageAction"
 )
 @ActionRegistration(
-        displayName = "#CTL_SupportPackageAction",
-        iconBase = "au/gov/asd/tac/constellation/utilities/support/supportPackage.png"
+        displayName = "#CTL_SupportPackageAction"
 )
 @ActionReference(path = "Menu/Help", position = 920)
 @Messages({
@@ -53,16 +51,18 @@ public final class SupportPackageAction implements ActionListener {
         if (saveAsDirectory != null) {
             final Date now = new Date();
             final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            final String username = StringUtilities.removeSpecialCharacters(System.getProperty("user.name"));
+            final String username = System.getenv("username");
 
             final File destination = new File(saveAsDirectory.getPath(), String.format("%s-%s-%s.zip", "SupportPackage", username, simpleDateFormat.format(now)));
             final SupportPackage supportPackage = new SupportPackage();
             final Thread supportPackageThread = new Thread(() -> {
                 try {
                     supportPackage.createSupportPackage(new File(SupportPackage.getUserLogDirectory()), destination);
-                    NotifyDisplayer.display("Support package saved successfully to " + destination.getPath(), NotifyDescriptor.INFORMATION_MESSAGE);
+                    final NotifyDescriptor nd = new NotifyDescriptor.Message("Support package saved successfully to " + destination.getPath(), NotifyDescriptor.INFORMATION_MESSAGE);
+                    DialogDisplayer.getDefault().notify(nd);
                 } catch (IOException ex) {
-                    NotifyDisplayer.display("Failed to save support package. The error was " + ex.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
+                    final NotifyDescriptor nd = new NotifyDescriptor.Message("Failed to save support package. The error was " + ex.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
+                    DialogDisplayer.getDefault().notify(nd);
                 }
             });
             supportPackageThread.setName("Support Package Thread");

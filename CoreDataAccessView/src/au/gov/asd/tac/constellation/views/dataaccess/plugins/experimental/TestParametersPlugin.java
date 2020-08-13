@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,52 +19,52 @@ import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStore;
 import au.gov.asd.tac.constellation.graph.processing.GraphRecordStoreUtilities;
 import au.gov.asd.tac.constellation.graph.processing.RecordStore;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.AnalyticConcept;
-import au.gov.asd.tac.constellation.graph.schema.analytic.concept.TemporalConcept;
-import au.gov.asd.tac.constellation.plugins.Plugin;
-import au.gov.asd.tac.constellation.plugins.PluginException;
-import au.gov.asd.tac.constellation.plugins.PluginInteraction;
-import au.gov.asd.tac.constellation.plugins.PluginNotificationLevel;
-import au.gov.asd.tac.constellation.plugins.parameters.ParameterChange;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameter;
-import au.gov.asd.tac.constellation.plugins.parameters.PluginParameters;
-import au.gov.asd.tac.constellation.plugins.parameters.types.ActionParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.BooleanParameterType.BooleanParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.ColorParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.ColorParameterType.ColorParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.DateTimeRange;
-import au.gov.asd.tac.constellation.plugins.parameters.types.DateTimeRangeParameterType.DateTimeRangeParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FileParameterType.FileParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FloatParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.FloatParameterType.FloatParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.IntegerParameterType.IntegerParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.LocalDateParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.LocalDateParameterType.LocalDateParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.ParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.PasswordParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.PasswordParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterType;
-import au.gov.asd.tac.constellation.plugins.parameters.types.StringParameterValue;
-import au.gov.asd.tac.constellation.utilities.color.ConstellationColor;
+import au.gov.asd.tac.constellation.pluginframework.Plugin;
+import au.gov.asd.tac.constellation.pluginframework.PluginException;
+import au.gov.asd.tac.constellation.pluginframework.PluginInteraction;
+import au.gov.asd.tac.constellation.pluginframework.PluginNotificationLevel;
+import au.gov.asd.tac.constellation.pluginframework.parameters.ParameterChange;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameter;
+import au.gov.asd.tac.constellation.pluginframework.parameters.PluginParameters;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.ActionParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.BooleanParameterType.BooleanParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.ColorParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.ColorParameterType.ColorParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.DateTimeRange;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.DateTimeRangeParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.DateTimeRangeParameterType.DateTimeRangeParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FileParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FileParameterType.FileParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FloatParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.FloatParameterType.FloatParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.IntegerParameterType.IntegerParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.LocalDateParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.LocalDateParameterType.LocalDateParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.MultiChoiceParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.MultiChoiceParameterType.MultiChoiceParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.ParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.PasswordParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.PasswordParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.SingleChoiceParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.SingleChoiceParameterType.SingleChoiceParameterValue;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterType;
+import au.gov.asd.tac.constellation.pluginframework.parameters.types.StringParameterValue;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.AnalyticConcept;
+import au.gov.asd.tac.constellation.schema.analyticschema.concept.TemporalConcept;
 import au.gov.asd.tac.constellation.views.dataaccess.CoreGlobalParameters;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPlugin;
 import au.gov.asd.tac.constellation.views.dataaccess.DataAccessPluginCoreType;
 import au.gov.asd.tac.constellation.views.dataaccess.state.DataAccessPreferenceKeys;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.QueryNameValidator;
 import au.gov.asd.tac.constellation.views.dataaccess.templates.RecordStoreQueryPlugin;
+import au.gov.asd.tac.constellation.visual.color.ConstellationColor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -77,6 +77,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.CheckBox;
@@ -130,16 +131,6 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
     public static final String LEVEL_PARAMETER_ID = PluginParameter.buildId(TestParametersPlugin.class, "level");
     public static final String SLEEP_PARAMETER_ID = PluginParameter.buildId(TestParametersPlugin.class, "sleep");
 
-    //Debug Levels
-    private static final String NONE = "None";
-    private static final String DEBUG = "Debug";
-    private static final String INFO = "Info";
-    private static final String WARNING = "Warning";
-    private static final String ERROR = "Error";
-    private static final String FATAL = "Fatal";
-
-    private final SecureRandom r = new SecureRandom();
-
     @StaticResource
     private static final String ALIEN_ICON = "au/gov/asd/tac/constellation/views/dataaccess/plugins/experimental/resources/alien.png";
 
@@ -177,10 +168,10 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         selected.setDescription("Only use selected elements");
         params.addParameter(selected);
 
-        final PluginParameter<StringParameterValue> queryName = CoreGlobalParameters.QUERY_NAME_PARAMETER;
+        final PluginParameter<StringParameterValue> queryName = StringParameterType.build(CoreGlobalParameters.QUERY_NAME_PARAMETER_ID);
         params.addParameter(queryName);
 
-        final PluginParameter<DateTimeRangeParameterValue> dt = CoreGlobalParameters.DATETIME_RANGE_PARAMETER;
+        final PluginParameter<DateTimeRangeParameterValue> dt = DateTimeRangeParameterType.build(CoreGlobalParameters.DATETIME_RANGE_PARAMETER_ID);
         params.addParameter(dt);
 
         final PluginParameter<StringParameterValue> string1 = StringParameterType.build(TEST1_PARAMETER_ID);
@@ -224,7 +215,6 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         // A single choice list with a subtype of String.
         final SingleChoiceParameterValue robotpv = new SingleChoiceParameterValue(StringParameterValue.class);
         robotpv.setGuiInit(control -> {
-            @SuppressWarnings("unchecked") //control will be of type ComboBox<ParameterValue> which extends from Region
             final ComboBox<ParameterValue> field = (ComboBox<ParameterValue>) control;
             final Image img = new Image(ALIEN_ICON);
             field.setCellFactory((ListView<ParameterValue> param) -> {
@@ -258,7 +248,7 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         buttonParam.setDescription("Update the available robots");
         params.addParameter(buttonParam);
 
-        final PluginParameter<MultiChoiceParameterValue> planetOptions = MultiChoiceParameterType.build(PLANETS_PARAMETER_ID);
+        final PluginParameter planetOptions = MultiChoiceParameterType.build(PLANETS_PARAMETER_ID);
         planetOptions.setName("Planets");
         planetOptions.setDescription("Some planets");
         MultiChoiceParameterType.setOptions(planetOptions, Arrays.asList("Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Coruscant"));
@@ -310,14 +300,14 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         final PluginParameter<SingleChoiceParameterValue> interactionOptions = SingleChoiceParameterType.build(INTERACTION_PARAMETER_ID);
         interactionOptions.setName("Interaction level");
         interactionOptions.setDescription("Interaction level for some interaction with the user");
-        SingleChoiceParameterType.setOptions(interactionOptions, Arrays.asList(NONE, DEBUG, INFO, WARNING, ERROR, FATAL));
+        SingleChoiceParameterType.setOptions(interactionOptions, Arrays.asList("None", "Debug", "Info", "Warning", "Error", "Fatal"));
         params.addParameter(interactionOptions);
 
         final PluginParameter<SingleChoiceParameterValue> levelOptions = SingleChoiceParameterType.build(LEVEL_PARAMETER_ID);
         levelOptions.setName("PluginException level");
         levelOptions.setDescription("PluginException level to throw an exception at");
         levelOptions.setHelpID("not.actually.helpful");
-        SingleChoiceParameterType.setOptions(levelOptions, Arrays.asList(NONE, DEBUG, INFO, WARNING, ERROR, FATAL));
+        SingleChoiceParameterType.setOptions(levelOptions, Arrays.asList("None", "Debug", "Info", "Warning", "Error", "Fatal"));
         params.addParameter(levelOptions);
 
         final PluginParameter<IntegerParameterValue> sleepParam = IntegerParameterType.build(SLEEP_PARAMETER_ID);
@@ -332,32 +322,26 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
             if (change == ParameterChange.VALUE) {
                 final boolean masterBoolean = master.getBooleanValue();
 
-                @SuppressWarnings("unchecked") //TEST1_PARAMETER will always be of type StringParameter
-                final PluginParameter<StringParameterValue> t1 = (PluginParameter<StringParameterValue>) parameters.get(TEST1_PARAMETER_ID);
+                final PluginParameter t1 = parameters.get(TEST1_PARAMETER_ID);
                 t1.setEnabled(masterBoolean);
 
-                @SuppressWarnings("unchecked") //TEST1_PARAMETER will always be of type StringParameter
-                final PluginParameter<StringParameterValue> t2 = (PluginParameter<StringParameterValue>) parameters.get(TEST2_PARAMETER_ID);
+                final PluginParameter t2 = parameters.get(TEST2_PARAMETER_ID);
                 t2.setEnabled(masterBoolean);
 
-                @SuppressWarnings("unchecked") //PLANETS_PARAMETER will always be of type MultiChoiceParameter
-                final PluginParameter<MultiChoiceParameterValue> p = (PluginParameter<MultiChoiceParameterValue>) parameters.get(PLANETS_PARAMETER_ID);
+                final PluginParameter p = parameters.get(PLANETS_PARAMETER_ID);
                 p.setEnabled(masterBoolean);
 
-                @SuppressWarnings("unchecked") //DICE_PARAMETER will always be of type IntegerParameter
-                final PluginParameter<IntegerParameterValue> d = (PluginParameter<IntegerParameterValue>) parameters.get(DICE_PARAMETER_ID);
+                final PluginParameter d = parameters.get(DICE_PARAMETER_ID);
                 d.setEnabled(masterBoolean);
 
-                @SuppressWarnings("unchecked") //COLOR_PARAMETER will always be of type ColorParameter
-                final PluginParameter<ColorParameterValue> c = (PluginParameter<ColorParameterValue>) parameters.get(COLOR_PARAMETER_ID);
+                final PluginParameter c = parameters.get(COLOR_PARAMETER_ID);
                 c.setVisible(masterBoolean);
             }
         });
 
         params.addController(REFRESH_PARAMETER_ID, (final PluginParameter<?> master, final Map<String, PluginParameter<?>> parameters, final ParameterChange change) -> {
             if (change == ParameterChange.NO_CHANGE) { // button pressed
-                @SuppressWarnings("unchecked") //ROBOT_PARAMETER will always be of type SingleChoiceParameter
-                final PluginParameter<SingleChoiceParameterValue> robot = (PluginParameter<SingleChoiceParameterValue>) parameters.get(ROBOT_PARAMETER_ID);
+                final PluginParameter robot = parameters.get(ROBOT_PARAMETER_ID);
                 final int n = (int) (System.currentTimeMillis() % 100);
                 SingleChoiceParameterType.setOptions(robot, Arrays.asList("Kryton " + n, "C-3PO " + n, "R2-D2 " + n));
                 SingleChoiceParameterType.setChoice(robot, "C-3PO " + n);
@@ -376,7 +360,6 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
-                Thread.currentThread().interrupt();
             }
         }
         LOGGER.log(Level.INFO, "slept for {0} seconds", sleep);
@@ -412,7 +395,9 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
             final String fnam = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")) + "-testChainer.txt";
             final File fout = new File(outputDir, fnam);
             try (final PrintWriter writer = new PrintWriter(fout, StandardCharsets.UTF_8.name())) {
-                parameters.getParameters().values().stream().forEach(param -> writer.printf("%s: '%s'", param.getName(), param.getStringValue()));
+                parameters.getParameters().values().stream().forEach((param) -> {
+                    writer.printf("%s: '%s'", param.getName(), param.getStringValue());
+                });
             } catch (final FileNotFoundException | UnsupportedEncodingException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -432,11 +417,11 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
             throw new RuntimeException("Simulated plugin failure");
         }
 
+        final Random r = new Random();
         try {
             interaction.setProgress(1, 0, String.format("Pretended to add %d node(s), modify %d node(s)", r.nextInt(100) + 1, r.nextInt(100) + 1), false);
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
-            Thread.currentThread().interrupt();
         }
 
         final String queryName = parameters.getStringValue(CoreGlobalParameters.QUERY_NAME_PARAMETER_ID);
@@ -451,19 +436,19 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         final PluginNotificationLevel pnInteractionLevel;
         if (interactionLevel != null) {
             switch (interactionLevel) {
-                case DEBUG:
+                case "Debug":
                     pnInteractionLevel = PluginNotificationLevel.DEBUG;
                     break;
-                case INFO:
+                case "Info":
                     pnInteractionLevel = PluginNotificationLevel.INFO;
                     break;
-                case WARNING:
+                case "Warning":
                     pnInteractionLevel = PluginNotificationLevel.WARNING;
                     break;
-                case ERROR:
+                case "Error":
                     pnInteractionLevel = PluginNotificationLevel.ERROR;
                     break;
-                case FATAL:
+                case "Fatal":
                     pnInteractionLevel = PluginNotificationLevel.FATAL;
                     break;
                 default:
@@ -480,19 +465,19 @@ public class TestParametersPlugin extends RecordStoreQueryPlugin implements Data
         final PluginNotificationLevel pnExceptionLevel;
         if (exceptionLevel != null) {
             switch (exceptionLevel) {
-                case DEBUG:
+                case "Debug":
                     pnExceptionLevel = PluginNotificationLevel.DEBUG;
                     break;
-                case INFO:
+                case "Info":
                     pnExceptionLevel = PluginNotificationLevel.INFO;
                     break;
-                case WARNING:
+                case "Warning":
                     pnExceptionLevel = PluginNotificationLevel.WARNING;
                     break;
-                case ERROR:
+                case "Error":
                     pnExceptionLevel = PluginNotificationLevel.ERROR;
                     break;
-                case FATAL:
+                case "Fatal":
                     pnExceptionLevel = PluginNotificationLevel.FATAL;
                     break;
                 default:

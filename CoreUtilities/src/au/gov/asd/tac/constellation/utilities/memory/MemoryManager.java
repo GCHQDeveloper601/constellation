@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,9 @@ public class MemoryManager {
         }
 
         synchronized (LISTENERS) {
-            LISTENERS.stream().forEach(listener -> listener.newObject(c));
+            LISTENERS.stream().forEach((listener) -> {
+                listener.newObject(c);
+            });
         }
     }
 
@@ -94,7 +96,9 @@ public class MemoryManager {
         }
 
         synchronized (LISTENERS) {
-            LISTENERS.stream().forEach(listener -> listener.finalizeObject(c));
+            LISTENERS.stream().forEach((listener) -> {
+                listener.finalizeObject(c);
+            });
         }
     }
 
@@ -107,16 +111,17 @@ public class MemoryManager {
      */
     public static Map<Class<?>, ClassStats> getObjectCounts() {
         synchronized (OBJECT_COUNTS) {
-            return new HashMap<>(OBJECT_COUNTS);
+            Map<Class<?>, ClassStats> counts = new HashMap<>(OBJECT_COUNTS);
+            return counts;
         }
     }
 
     /**
      * Adds a new listener to this MemoryManager.
      *
-     * @param listener the listener to be added.
+     * @param listener the new listener.
      */
-    public static void addMemoryManagerListener(final MemoryManagerListener listener) {
+    public static void addMemoryManagerListener(MemoryManagerListener listener) {
         synchronized (LISTENERS) {
             if (listener != null && !LISTENERS.contains(listener)) {
                 LISTENERS.add(listener);
@@ -129,7 +134,7 @@ public class MemoryManager {
      *
      * @param listener the listener to be removed.
      */
-    public static void removeMemoryManagerListener(final MemoryManagerListener listener) {
+    public static void removeMemoryManagerListener(MemoryManagerListener listener) {
         synchronized (LISTENERS) {
             LISTENERS.remove(listener);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
  */
 package au.gov.asd.tac.constellation.visual.opengl;
 
-import au.gov.asd.tac.constellation.utilities.gui.InfoTextPanel;
-import au.gov.asd.tac.constellation.utilities.text.SeparatorConstants;
+import au.gov.asd.tac.constellation.visual.InfoTextPanel;
 import au.gov.asd.tac.constellation.visual.opengl.utilities.SharedDrawable;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
@@ -39,8 +38,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Help", id = "au.gov.asd.tac.constellation.visual.opengl.JoglVersionAction")
-@ActionRegistration(displayName = "#CTL_JoglVersionAction",
-        iconBase = "au/gov/asd/tac/constellation/visual/opengl/versionsJOGL.png")
+@ActionRegistration(displayName = "#CTL_JoglVersionAction")
 @ActionReference(path = "Menu/Help", position = 1400, separatorBefore = 1350)
 @Messages("CTL_JoglVersionAction=JOGL Version")
 public final class JoglVersionAction implements ActionListener {
@@ -80,7 +78,7 @@ public final class JoglVersionAction implements ActionListener {
 
         sb.append("\nGL Strings\n");
         JoglVersion.getGLStrings(gl, sb, true);
-        sb.append(SeparatorConstants.NEWLINE);
+        sb.append("\n");
 
         final InfoTextPanel itp = new InfoTextPanel(sb.toString());
         final NotifyDescriptor.Message msg = new NotifyDescriptor.Message(itp);

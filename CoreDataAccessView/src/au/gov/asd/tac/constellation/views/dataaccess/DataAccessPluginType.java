@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,9 @@ public abstract class DataAccessPluginType {
         final List<PositionalDataAccessPluginType> ptypeList = getTypesOrderedByPosition();
 
         final List<String> typeList = new ArrayList<>();
-        ptypeList.stream().forEach(ppp -> typeList.add(ppp.type));
+        ptypeList.stream().forEach((ppp) -> {
+            typeList.add(ppp.type);
+        });
 
         return Collections.unmodifiableList(typeList);
     }
@@ -66,7 +68,9 @@ public abstract class DataAccessPluginType {
         final List<PositionalDataAccessPluginType> ptypeList = getTypesOrderedByPosition();
 
         final Map<String, Integer> typesWithPosition = new HashMap<>();
-        ptypeList.stream().forEach(plugin -> typesWithPosition.put(plugin.type, plugin.position));
+        ptypeList.stream().forEach((plugin) -> {
+            typesWithPosition.put(plugin.type, plugin.position);
+        });
 
         return typesWithPosition;
     }
@@ -80,9 +84,11 @@ public abstract class DataAccessPluginType {
      */
     private static List<PositionalDataAccessPluginType> getTypesOrderedByPosition() {
         final List<PositionalDataAccessPluginType> ptypeList = new ArrayList<>();
-        Lookup.getDefault().lookupAll(DataAccessPluginType.class).stream().forEach(type -> ptypeList.addAll(type.getPluginTypeList()));
+        Lookup.getDefault().lookupAll(DataAccessPluginType.class).stream().forEach((type) -> {
+            ptypeList.addAll(type.getPluginTypeList());
+        });
 
-        ptypeList.sort((pt1, pt2) -> {
+        ptypeList.sort((PositionalDataAccessPluginType pt1, PositionalDataAccessPluginType pt2) -> {
             return Integer.compare(pt1.position, pt2.position);
         });
 

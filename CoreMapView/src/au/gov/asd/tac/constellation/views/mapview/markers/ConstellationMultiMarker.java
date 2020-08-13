@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -232,7 +232,10 @@ public class ConstellationMultiMarker extends ConstellationAbstractMarker {
         if (!Objects.equals(this.getProperties(), other.getProperties())) {
             return false;
         }
-        return Objects.equals(this.getMarkers(), other.getMarkers());
+        if (!Objects.equals(this.getMarkers(), other.getMarkers())) {
+            return false;
+        }
+        return true;
     }
 
     @Override

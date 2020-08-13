@@ -66,7 +66,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import org.apache.commons.lang3.StringUtils;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
@@ -150,7 +149,6 @@ public class RecentFileAction extends AbstractAction
 
     @Override
     public void popupMenuCanceled(final PopupMenuEvent arg0) {
-        // Required to implement PopupMenuListener
     }
 
     /**
@@ -278,7 +276,7 @@ public class RecentFileAction extends AbstractAction
                 RecentFiles.pruneHistory();
             }
         }
-        // TODO: processing of pressing of a shortcut key that can be associated
+        // TODO: Processing of pressing of a shortcut key that can be associated
         // with this action. Note, in this case, any UI component can be passed
         // as the source.
     }
@@ -290,7 +288,7 @@ public class RecentFileAction extends AbstractAction
      * @return error message or {@code null} on success.
      */
     private String openFile(final String path) {
-        if (StringUtils.isBlank(path)) {
+        if (path == null || path.length() == 0) {
             return OFMSG_PATH_IS_NOT_DEFINED;
         }
         File f = new File(path);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Australian Signals Directorate
+ * Copyright 2010-2019 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ package au.gov.asd.tac.constellation.graph.utilities.wrapper;
 import au.gov.asd.tac.constellation.graph.Graph;
 import au.gov.asd.tac.constellation.graph.GraphElementType;
 import au.gov.asd.tac.constellation.graph.GraphWriteMethods;
-import au.gov.asd.tac.constellation.graph.attribute.IntegerAttributeDescription;
-import au.gov.asd.tac.constellation.graph.attribute.LongAttributeDescription;
-import au.gov.asd.tac.constellation.graph.attribute.ObjectAttributeDescription;
-import au.gov.asd.tac.constellation.graph.attribute.StringAttributeDescription;
-import au.gov.asd.tac.constellation.graph.schema.attribute.SchemaAttribute;
+import au.gov.asd.tac.constellation.graph.schema.SchemaAttribute;
 
 /**
  *
@@ -91,7 +87,7 @@ public abstract class GraphElement {
         if (attributeId == Graph.NOT_FOUND) {
             attributeId = writableGraph.getSchema() != null ? writableGraph.getSchema().getFactory().ensureAttribute(writableGraph, type, attribute) : Graph.NOT_FOUND;
             if (attributeId == Graph.NOT_FOUND) {
-                attributeId = writableGraph.addAttribute(type, StringAttributeDescription.ATTRIBUTE_NAME, attribute, "", null, null);
+                attributeId = writableGraph.addAttribute(type, "string", attribute, "", null, null);
             }
         }
         writableGraph.setStringValue(attributeId, id, value);
@@ -107,7 +103,7 @@ public abstract class GraphElement {
         if (attributeId == Graph.NOT_FOUND) {
             attributeId = writableGraph.getSchema() != null ? writableGraph.getSchema().getFactory().ensureAttribute(writableGraph, type, attribute) : Graph.NOT_FOUND;
             if (attributeId == Graph.NOT_FOUND) {
-                attributeId = writableGraph.addAttribute(type, IntegerAttributeDescription.ATTRIBUTE_NAME, attribute, "", 0, null);
+                attributeId = writableGraph.addAttribute(type, "integer", attribute, "", 0, null);
             }
         }
         writableGraph.setIntValue(attributeId, id, value);
@@ -123,7 +119,7 @@ public abstract class GraphElement {
         if (attributeId == Graph.NOT_FOUND) {
             attributeId = writableGraph.getSchema() != null ? writableGraph.getSchema().getFactory().ensureAttribute(writableGraph, type, attribute) : Graph.NOT_FOUND;
             if (attributeId == Graph.NOT_FOUND) {
-                attributeId = writableGraph.addAttribute(type, LongAttributeDescription.ATTRIBUTE_NAME, attribute, "", 0, null);
+                attributeId = writableGraph.addAttribute(type, "long", attribute, "", 0, null);
             }
         }
         writableGraph.setLongValue(attributeId, id, value);
@@ -139,7 +135,7 @@ public abstract class GraphElement {
         if (attributeId == Graph.NOT_FOUND) {
             attributeId = writableGraph.getSchema() != null ? writableGraph.getSchema().getFactory().ensureAttribute(writableGraph, type, attribute) : Graph.NOT_FOUND;
             if (attributeId == Graph.NOT_FOUND) {
-                attributeId = writableGraph.addAttribute(type, ObjectAttributeDescription.ATTRIBUTE_NAME, attribute, "", 0, null);
+                attributeId = writableGraph.addAttribute(type, "object", attribute, "", 0, null);
             }
         }
         writableGraph.setObjectValue(attributeId, id, value);

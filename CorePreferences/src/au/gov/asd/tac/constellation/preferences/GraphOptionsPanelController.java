@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Australian Signals Directorate
+ * Copyright 2010-2020 Australian Signals Directorate
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,11 +89,8 @@ public final class GraphOptionsPanelController extends OptionsPanelController {
     public boolean isChanged() {
         final Preferences prefs = NbPreferences.forModule(GraphPreferenceKeys.class);
         final GraphOptionsPanel graphOptionsPanel = getPanel();
-        final boolean changed
-                = !(graphOptionsPanel.getBlazeSize() == prefs.getInt(GraphPreferenceKeys.BLAZE_SIZE, GraphPreferenceKeys.BLAZE_SIZE_DEFAULT)
+        return !(graphOptionsPanel.getBlazeSize() == prefs.getInt(GraphPreferenceKeys.BLAZE_SIZE, GraphPreferenceKeys.BLAZE_SIZE_DEFAULT)
                 && graphOptionsPanel.getBlazeOpacity() == prefs.getInt(GraphPreferenceKeys.BLAZE_OPACITY, GraphPreferenceKeys.BLAZE_OPACITY_DEFAULT));
-
-        return changed;
     }
 
     @Override
